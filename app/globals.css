@@ -1,0 +1,138 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Dark mode is class-based and the class is never set: Tamweeni is a light, calm app. */
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+   Design tokens — the single place to change Tamweeni's look.
+   Palette from the brief: cream background, deep green accent, warm sand
+   secondary, dark green-grey text.
+--------------------------------------------------------------------------- */
+:root {
+  --background: #faf7f2; /* cream */
+  --foreground: #1e2a26; /* dark text */
+
+  --card: #ffffff;
+  --card-foreground: #1e2a26;
+  --popover: #ffffff;
+  --popover-foreground: #1e2a26;
+
+  --primary: #1f6f4a; /* deep green */
+  --primary-foreground: #ffffff;
+  --secondary: #e8d9bf; /* warm sand */
+  --secondary-foreground: #1e2a26;
+
+  --muted: #f1ece3;
+  --muted-foreground: #5f6b66;
+  --accent: #e6f0ea; /* light green tint for selected states */
+  --accent-foreground: #1f6f4a;
+
+  --destructive: #b4413c;
+  --success: #1f6f4a;
+  --warning: #c98a2e;
+
+  --border: #e6e0d6;
+  --input: #e6e0d6;
+  --ring: #1f6f4a;
+
+  /* Chart series: green, sand, soft green, pale sand, grey */
+  --chart-1: #1f6f4a;
+  --chart-2: #c9a96e;
+  --chart-3: #7fb39a;
+  --chart-4: #e8d9bf;
+  --chart-5: #5f6b66;
+
+  /* shadcn scales radii from this base: rounded-xl (cards) = 1.4 × base = 16px */
+  --radius: 0.7143rem;
+
+  /* Inter for Latin, IBM Plex Sans Arabic for Arabic; both loaded in app/layout.tsx */
+  --font-sans: var(--font-inter), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Arabic UI: lead with the Arabic face so Latin fallbacks stay harmonious. */
+html[lang="ar"] {
+  --font-sans: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  /* `font-ar` forces the Arabic face on Arabic text shown inside the English UI. */
+  --font-ar: var(--font-arabic), var(--font-sans);
+  --font-heading: var(--font-sans);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Top padding that clears the iOS status bar in standalone (PWA) mode. */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Bottom padding that clears the iPhone home indicator. */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* IBM Plex Sans Arabic renders visually smaller than Inter at the same size. */
+@utility text-nav-label {
+  font-size: 0.75rem;
+  line-height: 1;
+  html[lang="ar"] & {
+    font-size: 0.8125rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100dvh;
+    overscroll-behavior-y: none;
+  }
+  /* Big dashboard numbers line up when they change. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

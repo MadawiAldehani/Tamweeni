@@ -1,0 +1,121 @@
+{
+  "app": {
+    "name": "Tamweeni",
+    "nameArabic": "تمويني",
+    "tagline": "اعرف تموينك. خذ ما تحتاجه. تبرّع بالباقي.",
+    "shortDescription": "متابعة ذكية لتموين الأسر الكويتية"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "plan": "الخطة",
+    "donate": "التبرع",
+    "insights": "التحليلات",
+    "settings": "الإعدادات"
+  },
+  "language": {
+    "label": "اللغة",
+    "english": "English",
+    "arabic": "العربية",
+    "switchToArabic": "العربية",
+    "switchToEnglish": "English",
+    "shortEn": "EN",
+    "shortAr": "ع"
+  },
+  "common": {
+    "back": "رجوع",
+    "next": "التالي",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "continue": "متابعة",
+    "done": "تم",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "close": "إغلاق",
+    "loading": "جارٍ التحميل…",
+    "comingSoon": "قريبًا",
+    "learning": "قيد التعلّم",
+    "perPerson": "لكل فرد",
+    "perMonth": "شهريًا",
+    "thisMonth": "هذا الشهر",
+    "lastMonth": "الشهر الماضي",
+    "daysLeft": "باقي {count} يوم",
+    "oneDayLeft": "باقي يوم واحد",
+    "lastDay": "آخر يوم في الشهر",
+    "of": "من",
+    "and": "و",
+    "seeAll": "عرض الكل",
+    "retry": "إعادة المحاولة",
+    "somethingWentWrong": "حدث خطأ ما"
+  },
+  "units": {
+    "kg": "كجم",
+    "liter": "لتر",
+    "can": "علبة",
+    "cans": "علب",
+    "kd": "د.ك"
+  },
+  "pages": {
+    "home": {
+      "title": "الرئيسية",
+      "greeting": "حياك الله",
+      "placeholder": "ستظهر لوحة تموينك هنا.",
+      "subsidyCaption": "من الدعم المستحق هذا الشهر",
+      "actions": {
+        "scan": "مسح الفاتورة",
+        "plan": "خطة الاستلام",
+        "donate": "التبرع"
+      }
+    },
+    "plan": {
+      "title": "خطة الاستلام",
+      "subtitle": "خذ ما تحتاجه",
+      "placeholder": "خطّط لاستلام الشهر القادم واترك الباقي لمن يحتاجه."
+    },
+    "donate": {
+      "title": "التبرع",
+      "subtitle": "تبرّع بما لن تستخدمه",
+      "placeholder": "تعهّد بالتبرع بفائض مواد التموين للبنك الكويتي للطعام."
+    },
+    "insights": {
+      "title": "التحليلات",
+      "subtitle": "ما تستهلكه أسرتك فعلًا",
+      "placeholder": "ستظهر هنا رسوم بيانية تقارن المستحق بالمستلَم والمستهلَك."
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "placeholder": "اللغة والأسرة والأفراد."
+    },
+    "scan": {
+      "title": "مسح الفاتورة",
+      "subtitle": "صوّر فاتورة تموينك",
+      "placeholder": "سيظهر مسح الفاتورة هنا."
+    },
+    "pantry": {
+      "title": "جرد المخزن",
+      "subtitle": "كم تبقّى عندك؟",
+      "placeholder": "سيظهر جرد المخزن الأسبوعي هنا."
+    },
+    "impact": {
+      "title": "الأثر الوطني",
+      "subtitle": "بيانات مجمّعة ومجهولة الهوية من جميع أسر تمويني",
+      "placeholder": "ستظهر أرقام الأثر هنا.",
+      "stats": {
+        "households": "أسرة تستخدم تمويني",
+        "kgPledged": "كجم متعهَّد بها",
+        "kdRedirected": "د.ك من الدعم أُعيد توجيهها",
+        "overCollection": "نسبة الاستلام الزائد"
+      },
+      "backToApp": "افتح التطبيق"
+    },
+    "onboarding": {
+      "title": "أهلًا بك",
+      "chooseLanguage": "اختر لغتك",
+      "placeholder": "ستظهر خطوات البدء هنا."
+    },
+    "notFound": {
+      "title": "الصفحة غير موجودة",
+      "home": "العودة للرئيسية"
+    }
+  }
+}

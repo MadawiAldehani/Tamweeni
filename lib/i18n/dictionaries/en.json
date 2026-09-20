@@ -1,0 +1,121 @@
+{
+  "app": {
+    "name": "Tamweeni",
+    "nameArabic": "تمويني",
+    "tagline": "See your ration. Take what you need. Donate the rest.",
+    "shortDescription": "Smart ration tracking for Kuwaiti families"
+  },
+  "nav": {
+    "home": "Home",
+    "plan": "Plan",
+    "donate": "Donate",
+    "insights": "Insights",
+    "settings": "Settings"
+  },
+  "language": {
+    "label": "Language",
+    "english": "English",
+    "arabic": "العربية",
+    "switchToArabic": "العربية",
+    "switchToEnglish": "English",
+    "shortEn": "EN",
+    "shortAr": "ع"
+  },
+  "common": {
+    "back": "Back",
+    "next": "Next",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "continue": "Continue",
+    "done": "Done",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "loading": "Loading…",
+    "comingSoon": "Coming soon",
+    "learning": "Learning",
+    "perPerson": "per person",
+    "perMonth": "per month",
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "daysLeft": "{count} days left",
+    "oneDayLeft": "1 day left",
+    "lastDay": "Last day of the month",
+    "of": "of",
+    "and": "and",
+    "seeAll": "See all",
+    "retry": "Try again",
+    "somethingWentWrong": "Something went wrong"
+  },
+  "units": {
+    "kg": "kg",
+    "liter": "L",
+    "can": "can",
+    "cans": "cans",
+    "kd": "KD"
+  },
+  "pages": {
+    "home": {
+      "title": "Home",
+      "greeting": "Welcome back",
+      "placeholder": "Your ration dashboard will appear here.",
+      "subsidyCaption": "of subsidy entitled this month",
+      "actions": {
+        "scan": "Scan receipt",
+        "plan": "Plan pickup",
+        "donate": "Donate"
+      }
+    },
+    "plan": {
+      "title": "Plan pickup",
+      "subtitle": "Take what you need",
+      "placeholder": "Plan next month's pickup and leave the rest for someone else."
+    },
+    "donate": {
+      "title": "Donate",
+      "subtitle": "Give what you won't use",
+      "placeholder": "Pledge surplus ration items to the Kuwait Food Bank."
+    },
+    "insights": {
+      "title": "Insights",
+      "subtitle": "What your family really uses",
+      "placeholder": "Charts of entitled vs collected vs used will appear here."
+    },
+    "settings": {
+      "title": "Settings",
+      "placeholder": "Language, household and members."
+    },
+    "scan": {
+      "title": "Scan receipt",
+      "subtitle": "Photograph your ration receipt",
+      "placeholder": "Receipt scanning will appear here."
+    },
+    "pantry": {
+      "title": "Pantry check-in",
+      "subtitle": "How much is left?",
+      "placeholder": "Weekly pantry check-in will appear here."
+    },
+    "impact": {
+      "title": "National impact",
+      "subtitle": "Aggregated and anonymized across all Tamweeni households",
+      "placeholder": "Impact numbers will appear here.",
+      "stats": {
+        "households": "Households on Tamweeni",
+        "kgPledged": "kg pledged",
+        "kdRedirected": "KD of subsidy redirected",
+        "overCollection": "over-collection rate"
+      },
+      "backToApp": "Open the app"
+    },
+    "onboarding": {
+      "title": "Welcome",
+      "chooseLanguage": "Choose your language",
+      "placeholder": "Onboarding will appear here."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "home": "Go home"
+    }
+  }
+}
