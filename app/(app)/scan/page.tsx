@@ -1,5 +1,8 @@
 "use client";
 
+import { ScanLine } from "lucide-react";
+
+import { EmptyState } from "@/components/common/empty-state";
 import { AppHeader } from "@/components/shell/app-header";
 import { PageContainer } from "@/components/shell/page-container";
 import { Badge } from "@/components/ui/badge";
@@ -16,11 +19,17 @@ export default function ScanPage() {
         subtitle={t("pages.scan.subtitle")}
         backHref="/home"
       />
-      <PageContainer>
+      <PageContainer className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both">
         <Card>
-          <CardContent className="flex flex-col items-start gap-3">
-            <Badge variant="secondary">{t("common.comingSoon")}</Badge>
-            <p className="text-muted-foreground">{t("pages.scan.placeholder")}</p>
+          <CardContent className="flex flex-col gap-4">
+            <Badge variant="secondary" className="self-start">
+              {t("common.comingSoon")}
+            </Badge>
+            <EmptyState
+              icon={ScanLine}
+              title={t("pages.scan.placeholder")}
+              className="py-6"
+            />
           </CardContent>
         </Card>
       </PageContainer>

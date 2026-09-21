@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyState } from "@/components/common/empty-state";
 import { AppHeader } from "@/components/shell/app-header";
 import { PageContainer } from "@/components/shell/page-container";
 import { Badge } from "@/components/ui/badge";
@@ -12,11 +13,23 @@ export default function DonatePage() {
   return (
     <>
       <AppHeader title={t("pages.donate.title")} subtitle={t("pages.donate.subtitle")} />
-      <PageContainer>
+      <PageContainer className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both">
         <Card>
-          <CardContent className="flex flex-col items-start gap-3">
-            <Badge variant="secondary">{t("common.comingSoon")}</Badge>
-            <p className="text-muted-foreground">{t("pages.donate.placeholder")}</p>
+          <CardContent className="flex flex-col gap-4">
+            <Badge variant="secondary" className="self-start">
+              {t("common.comingSoon")}
+            </Badge>
+            {/* Terracotta is reserved for giving: the sadaqa circle. */}
+            <span
+              className="mx-auto flex size-14 select-none items-center justify-center rounded-full bg-warm/15 text-2xl leading-none"
+              aria-hidden="true"
+            >
+              🤲
+            </span>
+            <EmptyState
+              title={t("pages.donate.placeholder")}
+              className="py-6"
+            />
           </CardContent>
         </Card>
       </PageContainer>

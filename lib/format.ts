@@ -67,3 +67,26 @@ export function formatDate(iso: string, locale: Locale): string {
 export function todayISO(date: Date = new Date()): string {
   return `${currentMonth(date)}-${String(date.getDate()).padStart(2, "0")}`;
 }
+
+/** Fraction of the month elapsed, 0..1 (drives the ring on the home hero). */
+export function monthProgress(date: Date = new Date()): number {
+  const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  return Math.min(1, Math.max(0, date.getDate() / daysInMonth));
+}
+
+/**
+ * "Rabiʻ I 1448" / "ربيع الأول 1448" from the Umm al-Qura calendar via Intl.
+ * Returns "" if the runtime lacks the calendar so callers can fall back to Gregorian only.
+ */
+export function hijriMonthLabel(date: Date, locale: Locale): string {
+  try {
+    const tag =
+      locale === "ar" ? "ar-KW-u-ca-islamic-umalqura-nu-latn" : "en-u-ca-islamic-umalqura-nu-latn";
+    const parts = new Intl.DateTimeFormat(tag, { month: "long", year: "numeric" }).formatToParts(date);
+    const month = parts.find((p) => p.type === "month")?.value ?? "";
+    const year = parts.find((p) => p.type === "year")?.value ?? "";
+    return month && year ? `${month} ${year}` : "";
+  } catch {
+    return "";
+  }
+}

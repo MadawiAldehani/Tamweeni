@@ -1,54 +1,58 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
+
 import { LangToggle } from "@/components/common/lang-toggle";
 import { Logo } from "@/components/common/logo";
-import { Card, CardContent } from "@/components/ui/card";
+import { GovernorateList } from "@/components/impact/governorate-list";
+import { ImpactHero } from "@/components/impact/impact-hero";
+import { ImpactLedger } from "@/components/impact/impact-ledger";
+import { MethodNote } from "@/components/impact/method-note";
+import { Button } from "@/components/ui/button";
 import { useT } from "@/lib/i18n/provider";
-import type { TKey } from "@/lib/i18n/provider";
 
-const stats: TKey[] = [
-  "pages.impact.stats.households",
-  "pages.impact.stats.kgPledged",
-  "pages.impact.stats.kdRedirected",
-  "pages.impact.stats.overCollection",
-];
+const at = (i: number) => ({ "--i": i } as CSSProperties);
 
+/** Public, editorial page for judges and the ministry. No bottom nav, no auth. */
 export default function ImpactPage() {
   const t = useT();
 
   return (
     <div className="min-h-dvh">
-      <header className="pt-safe sticky top-0 z-30 bg-background/95 backdrop-blur">
+      <header className="pt-safe sticky top-0 z-30 bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-2xl items-center justify-between px-4 py-3">
           <Logo size="sm" />
           <LangToggle />
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 pt-6 pb-12">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold">{t("pages.impact.title")}</h1>
-          <p className="text-sm text-muted-foreground">{t("pages.impact.subtitle")}</p>
+      <main className="stagger mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 pt-8 pb-16 sm:pt-12">
+        {/* ImpactHero renders the eyebrow (--i 0) and headline block (--i 1). */}
+        <ImpactHero />
+
+        <div style={at(2)}>
+          <ImpactLedger />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          {stats.map((key) => (
-            <Card key={key}>
-              <CardContent className="flex flex-col gap-1">
-                <p className="tabular text-3xl font-semibold">—</p>
-                <p className="text-sm text-muted-foreground">{t(key)}</p>
-              </CardContent>
-            </Card>
-          ))}
+        <div style={at(3)}>
+          <GovernorateList />
         </div>
 
-        <Link
-          href="/home"
-          className="self-start text-sm font-medium text-primary underline-offset-4 hover:underline"
+        <div style={at(4)}>
+          <MethodNote />
+        </div>
+
+        <Button
+          style={at(5)}
+          nativeButton={false}
+          variant="outline"
+          size="lg"
+          className="pressable h-11 w-fit rounded-full px-5 text-sm"
+          render={<Link href="/home" />}
         >
           {t("pages.impact.backToApp")}
-        </Link>
+        </Button>
       </main>
     </div>
   );

@@ -1,64 +1,56 @@
 "use client";
 
 import Link from "next/link";
+import { useCallback, useRef, useState, type CSSProperties } from "react";
 import { Logo } from "@/components/common/logo";
+import { BEATS } from "@/components/onboarding/beats";
+import { LanguageCards } from "@/components/onboarding/language-cards";
+import { StepDots } from "@/components/onboarding/step-dots";
+import { StoryStrip } from "@/components/onboarding/story-strip";
 import { Button } from "@/components/ui/button";
-import { locales, type Locale } from "@/lib/i18n/config";
-import { useLanguage, useT } from "@/lib/i18n/provider";
-import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n/provider";
 
-const languageLabel: Record<Locale, "language.english" | "language.arabic"> = {
-  en: "language.english",
-  ar: "language.arabic",
-};
+const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
 export default function OnboardingPage() {
   const t = useT();
-  const { locale, setLocale } = useLanguage();
+  const listRef = useRef<HTMLUListElement>(null);
+  const [active, setActive] = useState(0);
+
+  const goToBeat = useCallback((index: number) => {
+    const li = listRef.current?.children[index];
+    li?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, []);
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-between px-6 pt-16 pb-10">
-      <div className="flex flex-col items-center gap-6 text-center">
-        <Logo size="lg" />
-        <p className="text-lg text-muted-foreground">{t("app.tagline")}</p>
+    <main className="stagger mx-auto flex min-h-dvh w-full max-w-md flex-col gap-6 px-5 pt-[calc(env(safe-area-inset-top)+1.25rem)] pb-8">
+      <div style={at(0)} className="flex flex-col items-center gap-2 text-center">
+        <Logo size="md" />
+        <p className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
+          {t("pages.onboarding.eyebrow")}
+        </p>
       </div>
 
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-3">
-          <p className="text-center text-sm font-medium text-muted-foreground">
-            {t("pages.onboarding.chooseLanguage")}
-          </p>
-          <div className="grid grid-cols-2 gap-3">
-            {locales.map((option) => {
-              const active = option === locale;
-              return (
-                <Button
-                  key={option}
-                  variant="outline"
-                  size="lg"
-                  lang={option}
-                  aria-pressed={active}
-                  onClick={() => setLocale(option)}
-                  className={cn(
-                    "h-14 rounded-xl text-base",
-                    active &&
-                      "border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-                  )}
-                >
-                  {t(languageLabel[option])}
-                </Button>
-              );
-            })}
-          </div>
-        </div>
+      <div style={at(1)}>
+        <StoryStrip listRef={listRef} onActiveChange={setActive} />
+      </div>
 
+      <div style={at(2)}>
+        <StepDots count={BEATS.length} active={active} onSelect={goToBeat} />
+      </div>
+
+      <div style={at(3)}>
+        <LanguageCards />
+      </div>
+
+      <div style={at(4)} className="mt-auto">
         <Button
           nativeButton={false}
           size="lg"
-          className="h-12 w-full rounded-xl text-base"
+          className="pressable h-12 w-full rounded-2xl text-base"
           render={<Link href="/home" />}
         >
-          {t("common.continue")}
+          {t("pages.onboarding.start")}
         </Button>
       </div>
     </main>

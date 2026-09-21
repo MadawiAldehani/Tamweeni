@@ -1,5 +1,8 @@
 "use client";
 
+import { ChartColumn } from "lucide-react";
+
+import { EmptyState } from "@/components/common/empty-state";
 import { AppHeader } from "@/components/shell/app-header";
 import { PageContainer } from "@/components/shell/page-container";
 import { Badge } from "@/components/ui/badge";
@@ -12,11 +15,17 @@ export default function InsightsPage() {
   return (
     <>
       <AppHeader title={t("pages.insights.title")} subtitle={t("pages.insights.subtitle")} />
-      <PageContainer>
+      <PageContainer className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both">
         <Card>
-          <CardContent className="flex flex-col items-start gap-3">
-            <Badge variant="secondary">{t("common.comingSoon")}</Badge>
-            <p className="text-muted-foreground">{t("pages.insights.placeholder")}</p>
+          <CardContent className="flex flex-col gap-4">
+            <Badge variant="secondary" className="self-start">
+              {t("common.comingSoon")}
+            </Badge>
+            <EmptyState
+              icon={ChartColumn}
+              title={t("pages.insights.placeholder")}
+              className="py-6"
+            />
           </CardContent>
         </Card>
       </PageContainer>

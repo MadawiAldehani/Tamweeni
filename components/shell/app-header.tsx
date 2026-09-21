@@ -26,13 +26,13 @@ export function AppHeader({
   const t = useT();
 
   return (
-    <header className="pt-safe sticky top-0 z-30 bg-background/95 backdrop-blur">
+    <header className="pt-safe sticky top-0 z-30 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-md items-center gap-3 px-4 py-3">
         {backHref ? (
           <Link
             href={backHref}
             aria-label={t("common.back")}
-            className="-ms-2 flex size-11 shrink-0 items-center justify-center rounded-full text-foreground hover:bg-muted"
+            className="pressable -ms-2 flex size-11 shrink-0 items-center justify-center rounded-full text-foreground hover:bg-muted"
           >
             <ChevronLeft className="size-6 rtl:-scale-x-100" aria-hidden="true" />
           </Link>
@@ -42,7 +42,10 @@ export function AppHeader({
           {showLogo ? (
             <>
               <h1 className="sr-only">{title}</h1>
-              <Logo size="sm" />
+              {/* Fade only, no movement: the sticky header stays anchored while the page cascades below. */}
+              <div className="animate-in fade-in duration-300">
+                <Logo size="sm" />
+              </div>
             </>
           ) : (
             <>

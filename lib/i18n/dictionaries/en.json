@@ -10,7 +10,8 @@
     "plan": "Plan",
     "donate": "Donate",
     "insights": "Insights",
-    "settings": "Settings"
+    "settings": "Settings",
+    "label": "Main navigation"
   },
   "language": {
     "label": "Language",
@@ -46,7 +47,11 @@
     "and": "and",
     "seeAll": "See all",
     "retry": "Try again",
-    "somethingWentWrong": "Something went wrong"
+    "somethingWentWrong": "Something went wrong",
+    "monthProgress": "Month progress",
+    "daysLeftLabel": "days left",
+    "oneDayLeftLabel": "day left",
+    "lastDayLabel": "last day"
   },
   "units": {
     "kg": "kg",
@@ -58,14 +63,41 @@
   "pages": {
     "home": {
       "title": "Home",
-      "greeting": "Welcome back",
+      "greeting": {
+        "morning": "Good morning",
+        "afternoon": "Good afternoon",
+        "evening": "Good evening"
+      },
       "placeholder": "Your ration dashboard will appear here.",
       "subsidyCaption": "of subsidy entitled this month",
       "actions": {
         "scan": "Scan receipt",
         "plan": "Plan pickup",
-        "donate": "Donate"
-      }
+        "donate": "Donate",
+        "scanHint": "after your branch visit",
+        "planHint": "before you go",
+        "donateHint": "the rest, in one tap"
+      },
+      "hero": {
+        "entitled": "Entitled this month",
+        "collected": "Collected",
+        "stillYours": "Still yours"
+      },
+      "insight": {
+        "empty": "Scan one receipt and we start learning what your family really uses."
+      },
+      "shelf": {
+        "title": "This month's shelf",
+        "caption": "Quotas are per person on the card. Your household total appears after setup.",
+        "infantTag": "Infants"
+      },
+      "sadaqa": {
+        "title": "Your sadaqa",
+        "caption": "given to the Kuwait Food Bank",
+        "empty": "Your first donation starts the count.",
+        "jariya": "صدقة جارية"
+      },
+      "impactLink": "See Kuwait's national picture"
     },
     "plan": {
       "title": "Plan pickup",
@@ -101,21 +133,65 @@
       "subtitle": "Aggregated and anonymized across all Tamweeni households",
       "placeholder": "Impact numbers will appear here.",
       "stats": {
-        "households": "Households on Tamweeni",
-        "kgPledged": "kg pledged",
+        "households": "households on Tamweeni",
+        "kgPledged": "kg pledged to the Kuwait Food Bank",
         "kdRedirected": "KD of subsidy redirected",
-        "overCollection": "over-collection rate"
+        "overCollection": "average over-collection"
       },
-      "backToApp": "Open the app"
+      "backToApp": "Open the app",
+      "eyebrow": "Kuwait · {month} · aggregated and anonymised",
+      "headline": "The first real picture of ration over-collection in Kuwait.",
+      "lede": "Since 1972 every Kuwaiti family has collected a monthly ration. Nobody has measured how much of it is actually used. Tamweeni households are changing that, one receipt at a time.",
+      "statsTitle": "National numbers",
+      "awaiting": "Awaiting the first households",
+      "statsCaption": "Live from Tamweeni households. Updated as receipts are scanned.",
+      "governorate": {
+        "title": "By governorate",
+        "caption": "Over-collection per governorate appears once at least 30 households report in each.",
+        "capital": "Capital",
+        "hawalli": "Hawalli",
+        "farwaniya": "Farwaniya",
+        "mubarak": "Mubarak Al-Kabeer",
+        "ahmadi": "Ahmadi",
+        "jahra": "Jahra"
+      },
+      "method": {
+        "title": "How the numbers are computed",
+        "body": "Entitlement is the official per-person quota × registered household members, priced at the subsidised rate. Collected comes from scanned branch receipts. Used comes from weekly pantry check-ins. Over-collection = (collected − used) ÷ collected, averaged across households with at least two months of data. No names, card numbers or addresses leave the phone.",
+        "request": "Detailed data available on request to the Ministry of Commerce and Industry."
+      },
+      "foodBankLine": "Surplus pledged through Tamweeni goes to the Kuwait Food Bank."
     },
     "onboarding": {
       "title": "Welcome",
       "chooseLanguage": "Choose your language",
-      "placeholder": "Onboarding will appear here."
+      "placeholder": "Onboarding will appear here.",
+      "eyebrow": "Kuwait's ration card, since 1972",
+      "storyLabel": "How Tamweeni works",
+      "beatLabel": "Step {n} of 3",
+      "story": {
+        "see": {
+          "title": "See your ration",
+          "body": "Everything your family is entitled to this month, in one place."
+        },
+        "take": {
+          "title": "Take what you need",
+          "body": "Plan your pickup around what you actually use."
+        },
+        "donate": {
+          "title": "Donate the rest",
+          "body": "One tap sends your surplus to the Kuwait Food Bank."
+        },
+        "foodBank": "Kuwait Food Bank"
+      },
+      "sampleEn": "Take only what you need",
+      "sampleAr": "خذوا اللي تحتاجونه بس",
+      "start": "Let's start"
     },
     "notFound": {
       "title": "Page not found",
-      "home": "Go home"
+      "home": "Go home",
+      "description": "This shelf is empty. Let's take you home."
     }
   }
 }

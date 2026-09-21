@@ -1,61 +1,77 @@
 "use client";
 
 import Link from "next/link";
-import { Camera, ClipboardList, HeartHandshake, type LucideIcon } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { useEffect, useState, type CSSProperties } from "react";
+
 import { LangToggle } from "@/components/common/lang-toggle";
+import { InsightCard } from "@/components/home/insight-card";
+import { MonthHeroCard } from "@/components/home/month-hero-card";
+import { monthProgress } from "@/lib/format";
+import { PantryShelf } from "@/components/home/pantry-shelf";
+import { QuickActions, type NextStep } from "@/components/home/quick-actions";
+import { SadaqaCounter } from "@/components/home/sadaqa-counter";
 import { AppHeader } from "@/components/shell/app-header";
 import { PageContainer } from "@/components/shell/page-container";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { formatKD } from "@/lib/format";
-import { useLanguage, useT } from "@/lib/i18n/provider";
-import type { TKey } from "@/lib/i18n/provider";
+import { useT } from "@/lib/i18n/provider";
 
-type Action = { href: string; labelKey: TKey; icon: LucideIcon };
+// Phase-1 placeholders. Phase 2 swaps these for the household's real figures.
+const entitledKD = 0;
+const collectedKD = 0;
+const donatedKg = 0;
+const hasReceiptThisMonth = false;
 
-const actions: Action[] = [
-  { href: "/scan", labelKey: "pages.home.actions.scan", icon: Camera },
-  { href: "/plan", labelKey: "pages.home.actions.plan", icon: ClipboardList },
-  { href: "/donate", labelKey: "pages.home.actions.donate", icon: HeartHandshake },
-];
+/** Next best step: scan first; once a receipt is in, plan the next pickup. */
+const nextStep: NextStep = hasReceiptThisMonth ? "plan" : "scan";
+
+const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
 export default function HomePage() {
   const t = useT();
-  const { locale } = useLanguage();
+  // Time-of-day state fills in after mount so server and client render the same markup.
+  const [now, setNow] = useState<Date | null>(null);
+  const [ringValue, setRingValue] = useState(0);
+
+  useEffect(() => {
+    const date = new Date();
+    setNow(date);
+    const target = monthProgress(date);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setRingValue(target);
+      return;
+    }
+    const timer = window.setTimeout(() => setRingValue(target), 150);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   return (
     <>
       <AppHeader title={t("pages.home.title")} showLogo action={<LangToggle />} />
-      <PageContainer className="flex flex-col gap-4">
-        <Card className="bg-primary text-primary-foreground ring-0">
-          <CardContent className="flex flex-col gap-2">
-            <p className="text-sm text-primary-foreground/80">{t("pages.home.greeting")}</p>
-            <p className="tabular text-4xl font-semibold">{formatKD(0, locale)}</p>
-            <p className="text-sm text-primary-foreground/80">
-              {t("pages.home.subsidyCaption")}
-            </p>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-3 gap-3">
-          {actions.map(({ href, labelKey, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex h-24 flex-col items-center justify-center gap-2 rounded-xl bg-card px-2 text-center ring-1 ring-foreground/10 transition-colors hover:bg-accent"
-            >
-              <Icon className="size-6 text-primary" aria-hidden="true" />
-              <span className="text-xs font-medium leading-tight">{t(labelKey)}</span>
-            </Link>
-          ))}
+      <PageContainer className="stagger flex flex-col gap-4">
+        <div style={at(0)}>
+          <MonthHeroCard entitledKD={entitledKD} collectedKD={collectedKD} now={now} ringValue={ringValue} />
         </div>
-
-        <Card>
-          <CardContent className="flex flex-col items-start gap-3">
-            <Badge variant="secondary">{t("common.comingSoon")}</Badge>
-            <p className="text-muted-foreground">{t("pages.home.placeholder")}</p>
-          </CardContent>
-        </Card>
+        <div style={at(1)}>
+          <InsightCard />
+        </div>
+        <div style={at(2)}>
+          <PantryShelf />
+        </div>
+        <div style={at(3)}>
+          <QuickActions nextStep={nextStep} />
+        </div>
+        <div style={at(4)}>
+          <SadaqaCounter donatedKg={donatedKg} />
+        </div>
+        <Link
+          href="/impact"
+          style={at(5)}
+          className="pressable inline-flex items-center gap-1.5 self-start text-sm font-medium text-primary"
+        >
+          {t("pages.home.impactLink")}
+          <ArrowRight className="size-4 rtl:-scale-x-100" aria-hidden="true" />
+        </Link>
       </PageContainer>
     </>
   );

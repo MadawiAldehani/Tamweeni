@@ -33,7 +33,7 @@ export function LangToggle({ className }: { className?: string }) {
             aria-pressed={active}
             onClick={() => setLocale(option)}
             className={cn(
-              "min-h-9 min-w-11 rounded-full px-3 text-sm font-medium transition-colors",
+              "pressable min-h-9 min-w-11 rounded-full px-3 text-sm font-medium transition-[background-color,color] duration-200",
               active
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground",
