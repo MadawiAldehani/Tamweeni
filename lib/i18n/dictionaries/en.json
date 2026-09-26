@@ -170,8 +170,73 @@
     },
     "donate": {
       "title": "Donate",
-      "subtitle": "Give what you won't use",
-      "placeholder": "Pledge surplus ration items to the Kuwait Food Bank."
+      "subtitle": "Give what you won’t use",
+      "placeholder": "Pledge surplus ration items to the Kuwait Food Bank.",
+      "voucher": {
+        "title": "Donation voucher",
+        "eyebrow": "Tamweeni · Kuwait Food Bank pledge",
+        "qrLabel": "QR code for voucher {code}",
+        "codeLabel": "Voucher code",
+        "pledgedOn": "Pledged {date}",
+        "items": "Pledged items",
+        "totals": "{kg} kg · {kd} · ≈ {meals} meals",
+        "instructions": "Show this voucher at the Kuwait Food Bank or your co-op's ration branch, or request a pickup below.",
+        "statusPledged": "Pledged",
+        "statusCollected": "Collected",
+        "markCollected": "Mark as collected (pilot)",
+        "markCollectedHint": "Collected by the Food Bank",
+        "backToPledges": "Back to pledges"
+      },
+      "whatsapp": {
+        "button": "Request pickup on WhatsApp",
+        "caption": "Opens WhatsApp with the voucher details; you choose the contact.",
+        "heading": "🤲 Tamweeni pickup request",
+        "voucher": "Voucher: {code}",
+        "month": "Month: {month}",
+        "line": "• {qty} {unit} {name}",
+        "closing": "Please contact us to arrange a pickup. Shukran!",
+        "signature": "— Sent from Tamweeni (تمويني)"
+      },
+      "history": {
+        "title": "Your pledges",
+        "count": "{count} vouchers",
+        "empty": "No pledges yet — your first voucher will appear here.",
+        "viewVoucher": "View voucher",
+        "markCollected": "Mark as collected",
+        "markPledged": "Mark as pledged",
+        "countOne": "1 voucher"
+      },
+      "picker": {
+        "surplusFor": "Surplus for {month}",
+        "fromPlan": "From your saved plan — what you’re leaving at the branch",
+        "fromSuggestion": "Based on what your family usually uses",
+        "fromNone": "Choose what you’d like to give",
+        "adjustPlan": "Adjust my pickup plan first",
+        "allPledged": "You’ve already pledged your whole surplus for {month}. Thank you."
+      },
+      "item": {
+        "upTo": "up to {qty} {unit}",
+        "decrement": "Give less {item}",
+        "increment": "Give more {item}"
+      },
+      "summary": {
+        "totals": "{kg} kg · {kd} of subsidy · ≈ {meals} meals",
+        "pledge": "Pledge to the Food Bank",
+        "pledging": "Pledging…",
+        "hint": "Pick at least one item",
+        "error": "Could not save the pledge. Try again."
+      },
+      "success": {
+        "title": "Pledged — thank you",
+        "meals": "Your family just passed on ≈ {meals} meals",
+        "backHome": "Back home",
+        "donateMore": "Donate more"
+      },
+      "empty": {
+        "title": "Add your family first",
+        "description": "Your surplus is worked out from the people on your ration card.",
+        "action": "Go to settings"
+      }
     },
     "insights": {
       "title": "Insights",
