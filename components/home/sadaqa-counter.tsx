@@ -1,12 +1,16 @@
 "use client";
 
 import { CountUp } from "@/components/common/count-up";
-import { formatNumber } from "@/lib/format";
+import type { Donation } from "@/lib/data/types";
+import { formatKD, formatNumber } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/provider";
+import { sadaqaTotals } from "@/lib/ration/meals";
 
 /** Running total of what the family has given. Terracotta lives here and nowhere else. */
-export function SadaqaCounter({ donatedKg }: { donatedKg: number }) {
+export function SadaqaCounter({ donations }: { donations: Donation[] }) {
   const { t, locale } = useLanguage();
+  const totals = sadaqaTotals(donations);
+  const hasGiven = totals.count > 0;
 
   return (
     <div className="flex items-center gap-4 rounded-2xl bg-card p-4 ring-1 ring-foreground/10">
@@ -23,14 +27,23 @@ export function SadaqaCounter({ donatedKg }: { donatedKg: number }) {
         <p className="tabular text-2xl font-semibold leading-tight">
           <bdi>
             <CountUp
-              value={donatedKg}
+              value={totals.kg}
               format={(n) => `${formatNumber(n, locale, 0)} ${t("units.kg")}`}
               durationMs={900}
             />
           </bdi>
+          {hasGiven ? (
+            <span className="tabular ms-2 text-sm font-medium text-warm">
+              <bdi>{t("pages.home.sadaqa.meals", { meals: formatNumber(totals.meals, locale, 0) })}</bdi>
+            </span>
+          ) : null}
         </p>
         <p className="text-xs text-muted-foreground">
-          {donatedKg > 0 ? t("pages.home.sadaqa.caption") : t("pages.home.sadaqa.empty")}
+          {hasGiven ? (
+            <bdi>{t("pages.home.sadaqa.subsidy", { kd: formatKD(totals.kd, locale) })}</bdi>
+          ) : (
+            t("pages.home.sadaqa.empty")
+          )}
         </p>
       </div>
       {/* The cultural phrase, shown in Arabic in both locales. */}

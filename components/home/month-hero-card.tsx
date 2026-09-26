@@ -4,32 +4,36 @@ import { CountUp } from "@/components/common/count-up";
 import { ProgressRing } from "@/components/common/progress-ring";
 import { SaduPattern } from "@/components/common/sadu-pattern";
 import { greetingFor } from "@/components/home/greeting";
-import { hijriMonthLabel } from "@/lib/format";
-import { currentMonth, daysLeftInMonth, formatKD, monthLabel } from "@/lib/format";
+import type { Household } from "@/lib/data/types";
+import { currentMonth, daysLeftInMonth, formatKD, formatKDWhole, hijriMonthLabel, monthLabel } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/provider";
+import type { MonthSummary } from "@/lib/ration/entitlement";
 
 type MonthHeroCardProps = {
-  entitledKD: number;
-  collectedKD: number;
-  /** null before mount (avoids hydration mismatch); the ring and greeting fill in after. */
+  summary: MonthSummary;
+  /** null before mount (avoids hydration mismatch); the greeting and days-left fill in after. */
   now: Date | null;
-  /** Fraction of the month elapsed, animated in by the page. */
+  household: Household | null;
+  /** Collected share of the entitlement, animated in by the page. */
   ringValue: number;
 };
 
-/** The family's month: calendar chip, greeting, the KD figure, and a sand ring of days left. */
-export function MonthHeroCard({ entitledKD, collectedKD, now, ringValue }: MonthHeroCardProps) {
+/** The family's month: calendar chip, greeting, the KD figure, and a sand ring of the share collected. */
+export function MonthHeroCard({ summary, now, household, ringValue }: MonthHeroCardProps) {
   const { t, locale } = useLanguage();
-  const stillYoursKD = Math.max(0, entitledKD - collectedKD);
   const greeting = now ? greetingFor(now.getHours()) : null;
   const hijri = hijriMonthLabel(now ?? new Date(), locale);
   const daysLeft = now ? daysLeftInMonth(now) : null;
-  const daysLabel =
-    daysLeft === 0
-      ? t("common.lastDayLabel")
-      : daysLeft === 1
-        ? t("common.oneDayLeftLabel")
-        : t("common.daysLeftLabel");
+  const daysChip =
+    daysLeft === null
+      ? ""
+      : daysLeft === 0
+        ? t("common.lastDay")
+        : daysLeft === 1
+          ? t("common.oneDayLeft")
+          : t("common.daysLeft", { count: daysLeft });
+  const greetingText = t(greeting?.key ?? "pages.home.greeting.morning");
+  const pct = Math.round((summary.entitledKD ? summary.collectedKD / summary.entitledKD : 0) * 100);
 
   return (
     <section className="bg-hero relative overflow-hidden rounded-2xl text-primary-foreground shadow-[0_16px_40px_-20px_rgba(31,111,74,0.55)]">
@@ -44,6 +48,7 @@ export function MonthHeroCard({ entitledKD, collectedKD, now, ringValue }: Month
           <bdi>
             {monthLabel(currentMonth(now ?? undefined), locale)}
             {hijri ? ` · ${hijri}` : ""}
+            {daysChip ? ` · ${daysChip}` : ""}
           </bdi>
         </span>
 
@@ -53,7 +58,9 @@ export function MonthHeroCard({ entitledKD, collectedKD, now, ringValue }: Month
               {greeting.emoji}
             </span>
           ) : null}
-          {t(greeting?.key ?? "pages.home.greeting.morning")}
+          {household?.name
+            ? t("pages.home.greeting.named", { greeting: greetingText, name: household.name })
+            : greetingText}
         </p>
 
         <div className="flex items-end justify-between gap-4">
@@ -63,20 +70,20 @@ export function MonthHeroCard({ entitledKD, collectedKD, now, ringValue }: Month
             </p>
             <bdi>
               <CountUp
-                value={entitledKD}
-                format={(n) => formatKD(n, locale)}
+                value={summary.entitledKD}
+                format={(n) => formatKDWhole(n, locale)}
                 durationMs={900}
-                className="tabular block text-[2.5rem] font-semibold leading-none tracking-tight"
+                className="tabular block whitespace-nowrap text-[2.5rem] font-semibold leading-none tracking-tight"
               />
             </bdi>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/75">
               <span>
                 {t("pages.home.hero.collected")}{" "}
-                <bdi className="font-medium text-white">{formatKD(collectedKD, locale)}</bdi>
+                <bdi className="font-medium text-white">{formatKD(summary.collectedKD, locale)}</bdi>
               </span>
               <span>
                 {t("pages.home.hero.stillYours")}{" "}
-                <bdi className="font-medium text-secondary">{formatKD(stillYoursKD, locale)}</bdi>
+                <bdi className="font-medium text-secondary">{formatKD(summary.remainingKD, locale)}</bdi>
               </span>
             </div>
           </div>
@@ -87,11 +94,13 @@ export function MonthHeroCard({ entitledKD, collectedKD, now, ringValue }: Month
             strokeWidth={8}
             trackClassName="text-white/20"
             progressClassName="text-secondary"
-            label={t("common.monthProgress")}
+            label={t("pages.home.hero.collectedShare")}
           >
-            <span className="tabular text-2xl font-semibold leading-none">{daysLeft ?? "—"}</span>
+            <span className="tabular text-2xl font-semibold leading-none">
+              <bdi>{pct}%</bdi>
+            </span>
             <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.06em] text-white/75">
-              {daysLabel}
+              {t("pages.home.hero.collectedLabel")}
             </span>
           </ProgressRing>
         </div>

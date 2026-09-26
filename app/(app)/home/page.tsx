@@ -2,67 +2,72 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import { LangToggle } from "@/components/common/lang-toggle";
 import { InsightCard } from "@/components/home/insight-card";
 import { MonthHeroCard } from "@/components/home/month-hero-card";
-import { monthProgress } from "@/lib/format";
 import { PantryShelf } from "@/components/home/pantry-shelf";
-import { QuickActions, type NextStep } from "@/components/home/quick-actions";
+import { QuickActions } from "@/components/home/quick-actions";
 import { SadaqaCounter } from "@/components/home/sadaqa-counter";
 import { AppHeader } from "@/components/shell/app-header";
 import { PageContainer } from "@/components/shell/page-container";
+import { useSnapshot } from "@/lib/data/provider";
+import { currentMonth } from "@/lib/format";
 import { useT } from "@/lib/i18n/provider";
-
-// Phase-1 placeholders. Phase 2 swaps these for the household's real figures.
-const entitledKD = 0;
-const collectedKD = 0;
-const donatedKg = 0;
-const hasReceiptThisMonth = false;
-
-/** Next best step: scan first; once a receipt is in, plan the next pickup. */
-const nextStep: NextStep = hasReceiptThisMonth ? "plan" : "scan";
+import { monthSummary } from "@/lib/ration/entitlement";
+import { nextStep as pickNextStep } from "@/lib/ration/insights";
 
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
 export default function HomePage() {
   const t = useT();
+  const snapshot = useSnapshot();
   // Time-of-day state fills in after mount so server and client render the same markup.
   const [now, setNow] = useState<Date | null>(null);
   const [ringValue, setRingValue] = useState(0);
 
+  const month = currentMonth(now ?? undefined);
+  const summary = useMemo(
+    () => monthSummary(snapshot.members, snapshot.pickups, month),
+    [snapshot.members, snapshot.pickups, month],
+  );
+  const nextStep = useMemo(() => pickNextStep(snapshot, now ?? new Date()), [snapshot, now]);
+  const collectedShare = summary.entitledKD ? summary.collectedKD / summary.entitledKD : 0;
+
   useEffect(() => {
-    const date = new Date();
-    setNow(date);
-    const target = monthProgress(date);
+    setNow(new Date());
+  }, []);
+
+  // The ring sweeps in after mount and again whenever the snapshot changes the share.
+  useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
-      setRingValue(target);
+      setRingValue(collectedShare);
       return;
     }
-    const timer = window.setTimeout(() => setRingValue(target), 150);
+    const timer = window.setTimeout(() => setRingValue(collectedShare), 150);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [collectedShare]);
 
   return (
     <>
       <AppHeader title={t("pages.home.title")} showLogo action={<LangToggle />} />
       <PageContainer className="stagger flex flex-col gap-4">
         <div style={at(0)}>
-          <MonthHeroCard entitledKD={entitledKD} collectedKD={collectedKD} now={now} ringValue={ringValue} />
+          <MonthHeroCard summary={summary} now={now} household={snapshot.household} ringValue={ringValue} />
         </div>
         <div style={at(1)}>
-          <InsightCard />
+          <InsightCard snapshot={snapshot} now={now} />
         </div>
         <div style={at(2)}>
-          <PantryShelf />
+          <PantryShelf summary={summary} memberCount={snapshot.members.length} />
         </div>
         <div style={at(3)}>
           <QuickActions nextStep={nextStep} />
         </div>
         <div style={at(4)}>
-          <SadaqaCounter donatedKg={donatedKg} />
+          <SadaqaCounter donations={snapshot.donations} />
         </div>
         <Link
           href="/impact"

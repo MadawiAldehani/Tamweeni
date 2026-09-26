@@ -1,0 +1,3 @@
+-- Intentionally empty. The ration catalog is reference data the schema depends on, so it
+-- ships as a migration: supabase/migrations/0002_ration_items.sql (idempotent upsert).
+-- `supabase db reset` runs the migrations first, so nothing else needs seeding here.

@@ -4,9 +4,10 @@ import Link from "next/link";
 
 import { useT } from "@/lib/i18n/provider";
 import type { TKey } from "@/lib/i18n/provider";
+import type { NextStep } from "@/lib/ration/insights";
 import { cn } from "@/lib/utils";
 
-export type NextStep = "scan" | "plan" | "donate";
+export type { NextStep } from "@/lib/ration/insights";
 
 type Action = {
   id: NextStep;
@@ -18,19 +19,23 @@ type Action = {
   hintKey: TKey;
 };
 
-const actions: Action[] = [
-  { id: "scan", href: "/scan", emoji: "📷", circleTint: "bg-secondary/60", labelKey: "pages.home.actions.scan", hintKey: "pages.home.actions.scanHint" },
-  { id: "plan", href: "/plan", emoji: "📝", circleTint: "bg-secondary/60", labelKey: "pages.home.actions.plan", hintKey: "pages.home.actions.planHint" },
-  { id: "donate", href: "/donate", emoji: "🤲", circleTint: "bg-warm/15", labelKey: "pages.home.actions.donate", hintKey: "pages.home.actions.donateHint" },
-];
+const scan: Action = { id: "scan", href: "/scan", emoji: "📷", circleTint: "bg-secondary/60", labelKey: "pages.home.actions.scan", hintKey: "pages.home.actions.scanHint" };
+const plan: Action = { id: "plan", href: "/plan", emoji: "📝", circleTint: "bg-secondary/60", labelKey: "pages.home.actions.plan", hintKey: "pages.home.actions.planHint" };
+const checkin: Action = { id: "checkin", href: "/pantry", emoji: "🧺", circleTint: "bg-secondary/60", labelKey: "pages.home.actions.checkin", hintKey: "pages.home.actions.checkinHint" };
+const donate: Action = { id: "donate", href: "/donate", emoji: "🤲", circleTint: "bg-warm/15", labelKey: "pages.home.actions.donate", hintKey: "pages.home.actions.donateHint" };
 
-/** Scan / Plan / Donate tiles; exactly one carries the "Next" badge. */
+/** Three tiles; the middle one is Plan unless a pantry check-in is the next step. */
+function actionsFor(nextStep: NextStep): Action[] {
+  return [scan, nextStep === "checkin" ? checkin : plan, donate];
+}
+
+/** Scan / Plan (or Check-in) / Donate tiles; exactly one carries the "Next" badge. */
 export function QuickActions({ nextStep }: { nextStep: NextStep }) {
   const t = useT();
 
   return (
     <div className="grid grid-cols-3 gap-3">
-      {actions.map((action) => {
+      {actionsFor(nextStep).map((action) => {
         const isNext = action.id === nextStep;
         return (
           <Link

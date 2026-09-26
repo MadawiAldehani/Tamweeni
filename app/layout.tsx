@@ -3,6 +3,7 @@ import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
+import { DataProvider } from "@/lib/data/provider";
 import { LOCALE_COOKIE, dirFor, resolveLocale } from "@/lib/i18n/config";
 import { LanguageProvider } from "@/lib/i18n/provider";
 import { translate } from "@/lib/i18n/translate";
@@ -70,7 +71,9 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="antialiased">
-        <LanguageProvider initialLocale={locale}>{children}</LanguageProvider>
+        <LanguageProvider initialLocale={locale}>
+          <DataProvider>{children}</DataProvider>
+        </LanguageProvider>
         <ServiceWorkerRegister />
       </body>
     </html>

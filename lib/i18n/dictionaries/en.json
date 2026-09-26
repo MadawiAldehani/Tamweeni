@@ -66,7 +66,8 @@
       "greeting": {
         "morning": "Good morning",
         "afternoon": "Good afternoon",
-        "evening": "Good evening"
+        "evening": "Good evening",
+        "named": "{greeting}, {name}"
       },
       "placeholder": "Your ration dashboard will appear here.",
       "subsidyCaption": "of subsidy entitled this month",
@@ -76,26 +77,39 @@
         "donate": "Donate",
         "scanHint": "after your branch visit",
         "planHint": "before you go",
-        "donateHint": "the rest, in one tap"
+        "donateHint": "the rest, in one tap",
+        "checkin": "Pantry check-in",
+        "checkinHint": "1 minute"
       },
       "hero": {
         "entitled": "Entitled this month",
         "collected": "Collected",
-        "stillYours": "Still yours"
+        "stillYours": "Still yours",
+        "collectedLabel": "collected",
+        "collectedShare": "Share of this month's ration collected"
       },
       "insight": {
-        "empty": "Scan one receipt and we start learning what your family really uses."
+        "empty": "Scan one receipt and we start learning what your family really uses.",
+        "noData": "Scan your first receipt to start learning your family's real usage.",
+        "surplus": "Last month you collected {collected} {unit} of {item} and used about {used} {unit}. You could donate {surplus} {unit} this month.",
+        "checkinDue": "A week since your pickup — a one-minute pantry check-in teaches Tamweeni what you really use.",
+        "tracked": "You've collected {collected} of your {entitled} this month. Plan the next pickup to take only what you use."
       },
       "shelf": {
         "title": "This month's shelf",
         "caption": "Quotas are per person on the card. Your household total appears after setup.",
-        "infantTag": "Infants"
+        "infantTag": "Infants",
+        "monthTitle": "This month's ration",
+        "forMembers": "for {count} members",
+        "progressLabel": "{item}: {collected} of {entitled} {unit} collected"
       },
       "sadaqa": {
         "title": "Your sadaqa",
         "caption": "given to the Kuwait Food Bank",
         "empty": "Your first donation starts the count.",
-        "jariya": "صدقة جارية"
+        "jariya": "صدقة جارية",
+        "meals": "≈ {meals} meals",
+        "subsidy": "{kd} of subsidy passed on"
       },
       "impactLink": "See Kuwait's national picture"
     },
@@ -116,7 +130,56 @@
     },
     "settings": {
       "title": "Settings",
-      "placeholder": "Language, household and members."
+      "placeholder": "Language, household and members.",
+      "language": {
+        "title": "Language",
+        "hint": "Switch any time. Your data stays the same in both languages."
+      },
+      "household": {
+        "title": "Household",
+        "name": "Household name",
+        "governorate": "Governorate",
+        "coop": "Co-op branch",
+        "edit": "Edit",
+        "dialogTitle": "Edit household",
+        "dialogHint": "The co-op branch is where you collect your ration.",
+        "namePlaceholder": "e.g. Al-Sabah family",
+        "coopPlaceholder": "e.g. Salmiya Co-op",
+        "saved": "Household updated"
+      },
+      "members": {
+        "title": "Members",
+        "count": "{count} members",
+        "countOne": "1 member",
+        "infant": "Infant",
+        "edit": "Edit members",
+        "dialogTitle": "Edit members",
+        "dialogHint": "Everyone on the ration card. Infants under two unlock the infant items.",
+        "saved": "Members updated · your monthly entitlement is now {kd}",
+        "empty": "No members yet"
+      },
+      "data": {
+        "title": "Data",
+        "demoMode": "Demo mode · data stays on this phone",
+        "supabaseMode": "Supabase · signed in as {email}",
+        "supabaseModeNoEmail": "Supabase · signed in",
+        "loadDemo": "Load demo family",
+        "loadDemoTitle": "Load the demo family?",
+        "loadDemoBody": "This replaces your current household, pickups and donations with the Al-Sabah demo family.",
+        "loadDemoConfirm": "Load demo family",
+        "loadDemoDone": "Demo family loaded",
+        "reset": "Reset all data",
+        "resetTitle": "Reset all data?",
+        "resetBody": "Your household, members, pickups and donations will be deleted. This cannot be undone.",
+        "resetConfirm": "Delete everything",
+        "signOut": "Sign out",
+        "working": "Working…"
+      },
+      "about": {
+        "title": "About",
+        "version": "Tamweeni MVP · v{version}",
+        "disclaimer": "Quotas and prices are from public sources; verify against MOCI's current list."
+      }
     },
     "scan": {
       "title": "Scan receipt",
@@ -186,7 +249,67 @@
       },
       "sampleEn": "Take only what you need",
       "sampleAr": "خذوا اللي تحتاجونه بس",
-      "start": "Let's start"
+      "start": {
+        "title": "How do you want to start?",
+        "demoBadge": "Demo mode · data stays on this phone",
+        "demoTitle": "Continue as demo family",
+        "demoCaption": "Al-Sabah family · 7 members · two months of history",
+        "demoLoading": "Loading the demo family…",
+        "setupTitle": "Set up my household",
+        "setupCaption": "Name, governorate, co-op and members · two minutes",
+        "signedInAs": "Signed in as {email}"
+      },
+      "alreadySetUp": "Already set up? Open the app",
+      "back": "Back",
+      "signin": {
+        "title": "Sign in to keep your data safe",
+        "body": "We email you a link. No password needed.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "submit": "Send me a sign-in link",
+        "sending": "Sending…",
+        "sentTitle": "Check your email for the link",
+        "sentBody": "We sent a sign-in link to {email}. Open it on this phone.",
+        "invalidEmail": "Enter a valid email address",
+        "failed": "We couldn't send the link. Please try again.",
+        "authError": "That sign-in link didn't work. Request a new one below."
+      },
+      "household": {
+        "title": "Your household",
+        "subtitle": "This is how we work out what your family is entitled to each month.",
+        "nameLabel": "Household name",
+        "namePlaceholder": "e.g. Al-Rashid family",
+        "governorateLabel": "Governorate",
+        "governoratePlaceholder": "Choose your governorate",
+        "coopLabel": "Co-op",
+        "coopPlaceholder": "e.g. Salmiya Co-op",
+        "membersLabel": "Members",
+        "membersHint": "Everyone on the ration card, infants included.",
+        "save": "Save and open my dashboard",
+        "saving": "Saving…",
+        "saveFailed": "We couldn't save your household. Please try again.",
+        "errors": {
+          "name": "Enter a household name (at least 2 letters)",
+          "governorate": "Choose your governorate",
+          "coop": "Enter your co-op name (at least 2 letters)",
+          "members": "Add at least one member",
+          "memberName": "Every member needs a name"
+        }
+      },
+      "members": {
+        "namePlaceholder": "Member name",
+        "nameLabel": "Member {n} name",
+        "infant": "Infant (under 2)",
+        "remove": "Remove {name}",
+        "removeUnnamed": "Remove member",
+        "add": "Add member"
+      },
+      "entitlement": {
+        "lead": "Your household is entitled to about",
+        "trail": "of subsidy per month",
+        "empty": "Name at least one member to see your entitlement.",
+        "breakdown": "Biggest items"
+      }
     },
     "notFound": {
       "title": "Page not found",
