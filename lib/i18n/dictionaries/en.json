@@ -184,7 +184,77 @@
     "scan": {
       "title": "Scan receipt",
       "subtitle": "Photograph your ration receipt",
-      "placeholder": "Receipt scanning will appear here."
+      "placeholder": "Receipt scanning will appear here.",
+      "capture": {
+        "title": "Photograph the receipt",
+        "tipFlat": "Flatten the receipt",
+        "tipLight": "Good light, no shadows",
+        "tipFrame": "Whole receipt in frame",
+        "takePhoto": "Take a photo",
+        "upload": "Upload an image",
+        "useSample": "Use the sample receipt",
+        "sampleAlt": "Sample ration receipt",
+        "manual": "I collected my full quota — enter manually",
+        "preview": "Selected photo",
+        "readThis": "Read this photo",
+        "or": "or"
+      },
+      "processing": {
+        "preparing": "Preparing the photo…",
+        "uploading": "Sending the photo…",
+        "ai": "Asking the model…",
+        "ocr": "Reading the receipt on your phone…",
+        "matching": "Matching items…",
+        "ocrNote": "Reading happens on your phone — nothing is uploaded.",
+        "aiNote": "Sent to the AI reader.",
+        "progressLabel": "Reading progress",
+        "errorTitle": "We couldn't read the photo",
+        "errorBody": "Check your connection or try a clearer photo."
+      },
+      "review": {
+        "title": "Check the lines",
+        "subtitle": "Fix anything the reader got wrong",
+        "backend": {
+          "sample": "Sample receipt",
+          "ocr": "Read on your phone",
+          "claude": "AI reader",
+          "manual": "Entered manually"
+        },
+        "store": "Co-op branch",
+        "storePlaceholder": "Co-op ration branch",
+        "date": "Pickup date",
+        "item": "Item",
+        "pickItem": "Pick an item",
+        "notRationItem": "Not a ration item",
+        "qty": "Quantity",
+        "unitPrice": "Unit price (KD)",
+        "confidence": "{percent}% sure",
+        "pleaseConfirm": "Please confirm",
+        "looksRight": "Looks right",
+        "confirmed": "Confirmed",
+        "removeLine": "Remove line",
+        "addLine": "Add line",
+        "empty": "We couldn't read any items — add them below or try a clearer photo.",
+        "rawText": "Text read from the receipt",
+        "summary": "{count} items · worth {kd} of subsidy",
+        "save": "Save pickup",
+        "saving": "Saving…",
+        "fixHint": "Fix the highlighted lines",
+        "saveError": "Couldn't save — try again.",
+        "retake": "Retake",
+        "allCollected": "Everything for this month is already recorded — add a line only if you collected more.",
+        "noLinesHint": "Add at least one line to save"
+      },
+      "saved": {
+        "title": "Pickup saved",
+        "subtitle": "Your month is up to date.",
+        "items": "items",
+        "volume": "kg & liters",
+        "subsidy": "of subsidy",
+        "hint": "In a week we'll ask how much is left — that's how Tamweeni learns your usage.",
+        "backHome": "Back home",
+        "scanAnother": "Scan another"
+      }
     },
     "pantry": {
       "title": "Pantry check-in",

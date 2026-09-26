@@ -23,10 +23,12 @@ const GENERIC_MILK = ["حليب", "milk"];
 
 const ARABIC_DIGITS = "٠١٢٣٤٥٦٧٨٩";
 
-/** Western digits, no diacritics, unified alef/yaa/taa-marbuta, single spaces. */
+/** Western digits and separators, no diacritics, unified alef/yaa/taa-marbuta, single spaces. */
 export function normalizeArabic(text: string): string {
   return text
     .replace(/[٠-٩]/g, (d) => String(ARABIC_DIGITS.indexOf(d)))
+    .replace(/٫/g, ".")
+    .replace(/٬/g, "")
     .replace(/[ً-ْـ]/g, "")
     .replace(/[إأآ]/g, "ا")
     .replace(/ى/g, "ي")
@@ -59,8 +61,9 @@ function packSize(line: string): number | null {
   return n;
 }
 
-function numbers(line: string): number[] {
-  return (line.match(/\d+(?:[.,]\d+)?/g) ?? []).map((n) => Number(n.replace(",", ".")));
+/** Numeric tokens as written, so "4.200" can still be told apart from "4.2". */
+function tokens(line: string): string[] {
+  return line.match(/\d+(?:[.,]\d+)?/g) ?? [];
 }
 
 /** Parses one OCR line into a ParsedLine, or null when it is clearly not an item. */
@@ -71,13 +74,18 @@ export function parseLine(raw: string): ParsedLine | null {
 
   const item = getItem(item_id);
   const size = item.unit === "can" ? null : packSize(line);
-  const nums = numbers(line);
-  const price = nums.find((n) => /\d\.\d{3}/.test(String(n))) ?? null;
-  const packs = nums.filter((n) => Number.isInteger(n) && n !== size && n !== price && n < 500).at(-1) ?? 1;
+  // The pack size is not a count or a price: drop it before looking at the other numbers.
+  const rest = size ? line.replace(PACK, " ") : line;
+  const toks = tokens(rest);
+  const nums = toks.map((t) => Number(t.replace(",", ".")));
+  // Kuwaiti prices carry three decimals (4.200 KD); detect that on the raw token.
+  const priceIdx = toks.findIndex((t) => /[.,]\d{3}$/.test(t));
+  const price = priceIdx >= 0 ? nums[priceIdx] : null;
+  const packs = nums.filter((n, i) => Number.isInteger(n) && i !== priceIdx && n < 500).at(-1) ?? 1;
   const qty = size ? Number((packs * size).toFixed(2)) : packs;
 
   let confidence = strength;
-  if (nums.length === 0) confidence -= 0.25;
+  if (toks.length === 0) confidence -= 0.25;
   if (!size && item.unit !== "can") confidence -= 0.15;
   const unit_price = price !== null && qty > 0 ? Number((price / qty).toFixed(3)) : null;
 
