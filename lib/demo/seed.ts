@@ -14,18 +14,23 @@ import type {
 
 const MEMBER_NAMES = ["Fahad", "Noura", "Abdullah", "Sara", "Yousef", "Dana", "Lulwa"] as const;
 
-/** What was left on the 27th of each past month (never above what was collected). */
+/**
+ * What was left on the 27th of each past month (never above what was collected).
+ * Usage is pro-rated from 24 days to a full month (× ~1.29), so every leftover stays
+ * above ~23 % of the quota; otherwise the model would show a family using more than
+ * its entitlement. milk_powder is two 2.27 kg tins.
+ */
 const REMAINING_LAST_MONTH: Record<RationItemId, number> = {
   rice: 20,
   sugar: 5,
-  oil: 2,
-  milk_powder: 2,
+  oil: 6,
+  milk_powder: 4.54,
   milk_longlife: 12,
   tomato_paste: 16,
   lentils: 1.5,
-  chicken: 1,
+  chicken: 6,
   dates: 2,
-  infant_milk: 1,
+  infant_milk: 2,
   infant_food: 0.5,
 };
 
@@ -34,7 +39,7 @@ const REMAINING_TWO_MONTHS_AGO: Record<RationItemId, number> = {
   ...REMAINING_LAST_MONTH,
   rice: 21,
   sugar: 5.5,
-  chicken: 2,
+  chicken: 7,
 };
 
 function isoDay(month: string, day: number): string {

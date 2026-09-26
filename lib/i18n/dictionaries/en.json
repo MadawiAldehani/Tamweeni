@@ -116,7 +116,57 @@
     "plan": {
       "title": "Plan pickup",
       "subtitle": "Take what you need",
-      "placeholder": "Plan next month's pickup and leave the rest for someone else."
+      "placeholder": "Plan next month's pickup and leave the rest for someone else.",
+      "month": {
+        "planning": "Planning {month}",
+        "thisMonth": "You have not collected this month yet, so this plan is for your next branch visit.",
+        "shifted": "You already collected this month, so this plan is for next month."
+      },
+      "learning": {
+        "title": "Tamweeni is still learning your usage",
+        "body": "Take what you need, then do a one-minute pantry check-in next week.",
+        "checkin": "Start a pantry check-in",
+        "afterPickup": "The check-in opens after this month’s pickup."
+      },
+      "item": {
+        "entitled": "Entitled {qty} {unit}",
+        "usage": "You usually use ~{qty} {unit}/month",
+        "pantry": "~{qty} {unit} at home",
+        "leaving": "Leaving {qty} {unit}",
+        "decrement": "Take less {item}",
+        "increment": "Take more {item}"
+      },
+      "summary": {
+        "leaving": "You’re leaving {kg} kg · {kd} of your entitlement",
+        "takingAll": "You’re taking your full entitlement",
+        "donate": "Donate it",
+        "save": "Save plan",
+        "saving": "Saving…",
+        "saveError": "Could not save the plan. Try again."
+      },
+      "checklist": {
+        "saved": "Saved plan",
+        "title": "Pickup list",
+        "edit": "Edit plan",
+        "share": "Share",
+        "copied": "Copied",
+        "showAtBranch": "Show this list at the ration branch",
+        "totals": "{count} items · {kd} subsidy",
+        "empty": "Nothing planned — you are leaving your full entitlement.",
+        "madeWith": "Made with Tamweeni",
+        "copyFailed": "Could not copy — long-press the list to copy it"
+      },
+      "pack": {
+        "multi": "{packs} × {size} {unit}",
+        "cans": "{packs} cans",
+        "can": "1 can",
+        "grams": "g"
+      },
+      "empty": {
+        "title": "Add your family first",
+        "description": "The plan is built from the people on your ration card.",
+        "action": "Go to settings"
+      }
     },
     "donate": {
       "title": "Donate",
@@ -259,7 +309,48 @@
     "pantry": {
       "title": "Pantry check-in",
       "subtitle": "How much is left?",
-      "placeholder": "Weekly pantry check-in will appear here."
+      "placeholder": "Weekly pantry check-in will appear here.",
+      "collectedOn": "Collected on {date}",
+      "today": "today",
+      "yesterday": "yesterday",
+      "daysAgo": "{count} days ago",
+      "intro": "Slide each item to what is left in your pantry. Takes a minute — it is how Tamweeni learns what your family really uses.",
+      "empty": {
+        "title": "Nothing collected this month yet",
+        "description": "Scan your branch receipt first, then come back to check your pantry.",
+        "scan": "Scan receipt"
+      },
+      "item": {
+        "of": "of {collected}",
+        "used": "≈ {used} {unit} used",
+        "sliderLabel": "{item} left in the pantry"
+      },
+      "chips": {
+        "allUsed": "All used",
+        "half": "Half",
+        "untouched": "Untouched"
+      },
+      "summary": "{count} items · ≈ {kg} kg used so far",
+      "save": "Save check-in",
+      "saving": "Saving…",
+      "saveError": "Could not save the check-in. Try again.",
+      "success": {
+        "title": "Check-in saved",
+        "subtitle": "Tamweeni just got smarter",
+        "learned": "What we learned",
+        "usageRow": "~{qty} {unit}/month",
+        "learning": "Still learning",
+        "plan": "Plan next pickup",
+        "backHome": "Back home"
+      },
+      "prompt": {
+        "title": "Time for your weekly pantry check-in",
+        "body": "It has been {count} days since your pickup",
+        "cta": "Start check-in",
+        "bodyFew": "It has been {count} days since your pickup"
+      },
+      "daysAgoFew": "{count} days ago",
+      "twoDaysAgo": "2 days ago"
     },
     "impact": {
       "title": "National impact",

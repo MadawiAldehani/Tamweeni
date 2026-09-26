@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { LangToggle } from "@/components/common/lang-toggle";
 import { InsightCard } from "@/components/home/insight-card";
 import { MonthHeroCard } from "@/components/home/month-hero-card";
+import { PantryPromptCard } from "@/components/home/pantry-prompt-card";
 import { PantryShelf } from "@/components/home/pantry-shelf";
 import { QuickActions } from "@/components/home/quick-actions";
 import { SadaqaCounter } from "@/components/home/sadaqa-counter";
@@ -60,6 +61,7 @@ export default function HomePage() {
         <div style={at(1)}>
           <InsightCard snapshot={snapshot} now={now} />
         </div>
+        <PantryPromptCard style={at(1.5)} />
         <div style={at(2)}>
           <PantryShelf summary={summary} memberCount={snapshot.members.length} />
         </div>
