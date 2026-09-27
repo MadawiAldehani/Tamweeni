@@ -1,6 +1,6 @@
 // What the home screen should nudge the family toward next, and the one-sentence
 // insight above it. Pure functions over a Snapshot; no React.
-import { getItem, subsidyPerUnit, type RationItemId } from "@/lib/ration/catalog";
+import { getItem, type RationItemId } from "@/lib/ration/catalog";
 import { collectedByItem, monthSummary } from "@/lib/ration/entitlement";
 import { addMonths, currentMonth, formatKD, formatNumber, todayISO } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
@@ -86,7 +86,9 @@ function bestSurplus(
       ? snapshot.donations.filter((d) => d.month === month && d.item_id === id).reduce((sum, d) => sum + d.qty, 0)
       : 0;
     const surplus = Math.max(0, usage.surplus - pledged);
-    const value = surplus * subsidyPerUnit(getItem(id));
+    // Rank by quantity so the sentence talks about the biggest pile (e.g. "20 kg of rice");
+    // cans count for little because a few tins are not worth a trip.
+    const value = getItem(id).unit === "can" ? surplus * 0.1 : surplus;
     if (surplus >= MIN_SURPLUS && (!best || value > best.value)) best = { id, usage: { ...usage, surplus }, value };
   }
   return best ? { id: best.id, usage: best.usage } : null;

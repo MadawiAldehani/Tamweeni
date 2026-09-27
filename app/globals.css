@@ -37,11 +37,13 @@
   --input: #e6e0d6;
   --ring: #1f6f4a;
 
-  /* Chart series: green, sand, soft green, pale sand, grey */
-  --chart-1: #1f6f4a;
-  --chart-2: #c9a96e;
-  --chart-3: #7fb39a;
-  --chart-4: #e8d9bf;
+  /* Chart series, validated with the dataviz palette checker (CVD-safe pair):
+     chart-1 = collected (green), chart-2 = used (terracotta), chart-3 = the neutral
+     "entitled" track, chart-4 = light green for single-hue bars, chart-5 = muted ink. */
+  --chart-1: #2a7f58;
+  --chart-2: #c97b4a;
+  --chart-3: #f1ece3;
+  --chart-4: #7fb39a;
   --chart-5: #5f6b66;
 
   /* shadcn scales radii from this base: rounded-xl (cards) = 1.4 × base = 16px */

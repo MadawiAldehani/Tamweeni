@@ -1,57 +1,58 @@
-// Phase-1 placeholders for the public /impact page. No React.
-// Phase 2 replaces IMPACT_VALUES / GOVERNORATE_RATES with real aggregates; the page
-// renders "—" + "Awaiting the first households" for every null and never invents figures.
-import { formatNumber } from "@/lib/format";
+// Turns ImpactStats (live or the pilot projection) into what the /impact page renders. No React.
+import { formatKDWhole, formatNumber } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
+import { localized } from "@/lib/i18n/translate";
+import type { TKey, TVars } from "@/lib/i18n/translate";
+import type { ImpactStats } from "@/lib/impact/types";
+import { GOVERNORATES, type Governorate } from "@/lib/ration/governorates";
 
 export type StatKey = "households" | "kgPledged" | "kdRedirected" | "overCollection";
 
 export type Stat = {
   key: StatKey;
-  /** null until real data exists; overCollection is a percent 0..100. */
+  /** null renders "—" + "Awaiting the first households"; overCollection is a percent 0..100. */
   value: number | null;
   format: (n: number) => string;
 };
 
-export type GovernorateId = "capital" | "hawalli" | "farwaniya" | "mubarak" | "ahmadi" | "jahra";
-
-export type Governorate = {
-  id: GovernorateId;
-  /** Average over-collection percent 0..100, or null below the 30-household threshold. */
-  rate: number | null;
-};
-
-/** The founder can set real values here before 28 Sept. */
-export const IMPACT_VALUES: Record<StatKey, number | null> = {
-  households: null,
-  kgPledged: null,
-  kdRedirected: null,
-  overCollection: null,
-};
-
-export const GOVERNORATE_RATES: Record<GovernorateId, number | null> = {
-  capital: null,
-  hawalli: null,
-  farwaniya: null,
-  mubarak: null,
-  ahmadi: null,
-  jahra: null,
+export type GovernorateRow = {
+  id: Governorate;
+  name: string;
+  /** Over-collection percent 0..100, or null below the 30-household threshold. */
+  pct: number | null;
+  households: number;
 };
 
 const STAT_ORDER: StatKey[] = ["households", "kgPledged", "kdRedirected", "overCollection"];
-const GOVERNORATE_ORDER: GovernorateId[] = ["capital", "hawalli", "farwaniya", "mubarak", "ahmadi", "jahra"];
 
-/** Whole numbers in every cell; the "KD" / "%" units live in the label or the format. */
-export function buildStats(locale: Locale): Stat[] {
+export function buildStats(stats: ImpactStats, locale: Locale, t: (key: TKey, vars?: TVars) => string): Stat[] {
   const whole = (n: number) => formatNumber(n, locale, 0);
-  const percent = (n: number) => `${formatNumber(n, locale, 0)}%`;
-  return STAT_ORDER.map((key) => ({
-    key,
-    value: IMPACT_VALUES[key],
-    format: key === "overCollection" ? percent : whole,
-  }));
+  const formats: Record<StatKey, (n: number) => string> = {
+    households: whole,
+    kgPledged: (n) => `${whole(n)} ${t("units.kg")}`,
+    kdRedirected: (n) => formatKDWhole(n, locale),
+    overCollection: (n) => `${whole(n)}%`,
+  };
+  const values: Record<StatKey, number | null> = {
+    households: stats.households,
+    kgPledged: stats.kgPledged,
+    kdRedirected: stats.kdRedirected,
+    overCollection: stats.overCollectionRate === null ? null : stats.overCollectionRate * 100,
+  };
+  return STAT_ORDER.map((key) => ({ key, value: values[key], format: formats[key] }));
 }
 
-export function buildGovernorates(): Governorate[] {
-  return GOVERNORATE_ORDER.map((id) => ({ id, rate: GOVERNORATE_RATES[id] }));
+/** Localized rows sorted by rate, highest first; governorates still below the threshold come last. */
+export function buildGovernorates(stats: ImpactStats, locale: Locale): GovernorateRow[] {
+  const byId = new Map(stats.governorates.map((g) => [g.id, g]));
+  return GOVERNORATES.map(({ id, ...names }) => {
+    const gov = byId.get(id);
+    const rate = gov?.overCollectionRate ?? null;
+    return {
+      id,
+      name: localized(names, "name", locale),
+      pct: rate === null ? null : rate * 100,
+      households: gov?.households ?? 0,
+    };
+  }).sort((a, b) => (b.pct ?? -1) - (a.pct ?? -1));
 }

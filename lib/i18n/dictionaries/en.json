@@ -239,9 +239,54 @@
       }
     },
     "insights": {
-      "title": "Insights",
+      "title": "Our numbers",
       "subtitle": "What your family really uses",
-      "placeholder": "Charts of entitled vs collected vs used will appear here."
+      "placeholder": "Charts of entitled vs collected vs used will appear here.",
+      "chips": {
+        "label": "Choose an item"
+      },
+      "series": {
+        "entitled": "Entitled",
+        "collected": "Collected",
+        "used": "Used",
+        "unused": "Unused"
+      },
+      "noCheckin": "No pantry check-in that month",
+      "table": {
+        "show": "Show as table",
+        "hide": "Show as chart",
+        "month": "Month",
+        "noData": "—"
+      },
+      "itemChart": {
+        "title": "{item} · last 3 months",
+        "description": "Quantities in {unit} per month. The grey track is your entitlement.",
+        "aria": "{item}: entitled, collected and used per month"
+      },
+      "money": {
+        "title": "Subsidy received vs used",
+        "description": "Value of the subsidy each month, in KD.",
+        "aria": "Subsidy received and used per month",
+        "summary": "Last 3 months: {received} received · ≈ {used} used · {unused} unused",
+        "receivedOnly": "Last 3 months: {received} received",
+        "noCheckin": "Do a pantry check-in to see what you use",
+        "received": "Received"
+      },
+      "waste": {
+        "title": "Waste risk",
+        "description": "Share of what you collected that went unused, highest first.",
+        "unused": "≈ {qty} {unit} unused over {count} months",
+        "unusedOne": "≈ {qty} {unit} unused last month",
+        "shareLabel": "{item}: {pct}% unused",
+        "donate": "Donate the surplus",
+        "empty": {
+          "title": "No pantry check-ins yet",
+          "description": "Check what is left in your pantry and Tamweeni learns what your family really uses.",
+          "cta": "Do your first pantry check-in"
+        },
+        "unusedTwo": "≈ {qty} {unit} unused over the last 2 months"
+      },
+      "footnote": "Estimates come from your pantry check-ins; the more you do, the sharper they get."
     },
     "settings": {
       "title": "Settings",
@@ -423,8 +468,8 @@
       "placeholder": "Impact numbers will appear here.",
       "stats": {
         "households": "households on Tamweeni",
-        "kgPledged": "kg pledged to the Kuwait Food Bank",
-        "kdRedirected": "KD of subsidy redirected",
+        "kgPledged": "pledged to the Kuwait Food Bank",
+        "kdRedirected": "of subsidy redirected",
         "overCollection": "average over-collection"
       },
       "backToApp": "Open the app",
@@ -442,14 +487,31 @@
         "farwaniya": "Farwaniya",
         "mubarak": "Mubarak Al-Kabeer",
         "ahmadi": "Ahmadi",
-        "jahra": "Jahra"
+        "jahra": "Jahra",
+        "chartView": "Chart",
+        "tableView": "Table",
+        "viewLabel": "View as",
+        "awaitingRow": "{name}: awaiting 30 households",
+        "households": "{count} households",
+        "colGovernorate": "Governorate",
+        "colRate": "Over-collection",
+        "colHouseholds": "Households",
+        "chartLabel": "Over-collection rate per governorate, highest first",
+        "awaitingCell": "Awaiting 30 households"
       },
       "method": {
         "title": "How the numbers are computed",
-        "body": "Entitlement is the official per-person quota × registered household members, priced at the subsidised rate. Collected comes from scanned branch receipts. Used comes from weekly pantry check-ins. Over-collection = (collected − used) ÷ collected, averaged across households with at least two months of data. No names, card numbers or addresses leave the phone.",
+        "body": "Entitlement is the official per-person quota × registered household members, priced at the subsidised rate. Collected comes from scanned branch receipts. Used comes from weekly pantry check-ins. Over-collection = Σ (collected − used) ÷ Σ collected over the last three months, across households with at least one pantry check-in. No names, card numbers or addresses leave the phone.",
         "request": "Detailed data available on request to the Ministry of Commerce and Industry."
       },
-      "foodBankLine": "Surplus pledged through Tamweeni goes to the Kuwait Food Bank."
+      "foodBankLine": "Surplus pledged through Tamweeni goes to the Kuwait Food Bank.",
+      "source": {
+        "demo": "Pilot projection · demo data",
+        "live": "Live · updated {date}",
+        "note": "Projection based on the 2025 MOCI ration figures and the pilot's first households; live numbers replace it as families join.",
+        "info": "About these numbers"
+      },
+      "eyebrowProjection": "Kuwait · {month} · pilot projection"
     },
     "onboarding": {
       "title": "Welcome",
