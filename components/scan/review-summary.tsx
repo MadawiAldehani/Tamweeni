@@ -39,7 +39,7 @@ export function ReviewSummary({ totals, savable, saving, error, hint = null, sty
         {saving ? t("pages.scan.review.saving") : t("pages.scan.review.save")}
       </Button>
       {hint ? (
-        <p className="text-center text-xs text-warning">{hint}</p>
+        <p className="text-center text-xs text-warning-ink">{hint}</p>
       ) : error ? (
         <p className="text-center text-xs text-destructive">{t("pages.scan.review.saveError")}</p>
       ) : null}

@@ -12,8 +12,14 @@ export async function GET(request: Request): Promise<NextResponse> {
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
   const nextParam = searchParams.get("next") ?? "/";
-  // Only same-site paths: an absolute URL here would be an open redirect.
-  const next = nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : "/";
+  // Only same-origin targets: resolving first catches "//evil", "/\\evil", absolute and javascript: URLs alike.
+  let next = "/";
+  try {
+    const target = new URL(nextParam, origin);
+    if (target.origin === origin) next = target.pathname + target.search + target.hash;
+  } catch {
+    /* unparsable: keep "/" */
+  }
 
   if (code || (tokenHash && type)) {
     const supabase = await createSupabaseServerClient();

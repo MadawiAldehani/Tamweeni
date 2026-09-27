@@ -4,6 +4,7 @@
 import { RATION_ITEMS, type RationItemId } from "@/lib/ration/catalog";
 import { entitledQty } from "@/lib/ration/entitlement";
 import { addMonths, currentMonth } from "@/lib/format";
+import type { Locale } from "@/lib/i18n/config";
 import type {
   Donation,
   Member,
@@ -12,7 +13,19 @@ import type {
   Snapshot,
 } from "@/lib/data/types";
 
-const MEMBER_NAMES = ["Fahad", "Noura", "Abdullah", "Sara", "Yousef", "Dana", "Lulwa"] as const;
+/** Names in the family's own script so the RTL screens never mix Latin into Arabic; the last member is the infant. */
+const DEMO_NAMES: Record<Locale, { household: string; coop: string; members: readonly string[] }> = {
+  en: {
+    household: "Al-Sabah family",
+    coop: "Salmiya Co-op",
+    members: ["Fahad", "Noura", "Abdullah", "Sara", "Yousef", "Dana", "Lulwa"],
+  },
+  ar: {
+    household: "عائلة الصباح",
+    coop: "جمعية السالمية",
+    members: ["فهد", "نورة", "عبدالله", "سارة", "يوسف", "دانة", "لولوة"],
+  },
+};
 
 /**
  * What was left on the 27th of each past month (never above what was collected).
@@ -55,12 +68,12 @@ function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
-function buildMembers(householdId: string): Member[] {
-  return MEMBER_NAMES.map((name, index) => ({
+function buildMembers(householdId: string, names: readonly string[]): Member[] {
+  return names.map((name, index) => ({
     id: `demo-m${index + 1}`,
     household_id: householdId,
     name,
-    is_infant: name === "Lulwa",
+    is_infant: index === names.length - 1,
   }));
 }
 
@@ -103,12 +116,14 @@ function buildCheckins(
 export function buildDemoSnapshot(
   now: Date,
   ids?: { householdId?: string; ownerUserId?: string | null },
+  locale: Locale = "en",
 ): Snapshot {
   const householdId = ids?.householdId ?? "demo-household";
+  const names = DEMO_NAMES[locale];
   const thisMonth = currentMonth(now);
   const m1 = addMonths(thisMonth, -1);
   const m2 = addMonths(thisMonth, -2);
-  const members = buildMembers(householdId);
+  const members = buildMembers(householdId, names.members);
 
   const donation: Donation = {
     id: "demo-donation-m1-rice",
@@ -125,9 +140,9 @@ export function buildDemoSnapshot(
     household: {
       id: householdId,
       owner_user_id: ids?.ownerUserId ?? null,
-      name: "Al-Sabah family",
+      name: names.household,
       governorate: "hawalli",
-      coop_name: "Salmiya Co-op",
+      coop_name: names.coop,
       created_at: isoTimestamp(m2, 1),
     },
     members,

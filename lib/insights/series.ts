@@ -1,10 +1,10 @@
 // Series for the insights charts: entitled / collected / used per month and per item.
 // Pure functions over a Snapshot; no React. Money is the subsidy value (what the state gives away).
-import type { PickupWithLines, Snapshot } from "@/lib/data/types";
+import type { Snapshot } from "@/lib/data/types";
 import { addMonths, currentMonth } from "@/lib/format";
 import { RATION_ITEMS, RATION_ITEM_IDS, getItem, type RationItem, type RationItemId } from "@/lib/ration/catalog";
 import { collectedByItem, entitledQty, subsidyValue } from "@/lib/ration/entitlement";
-import { estimateUsage } from "@/lib/ration/insights";
+import { checkinsForMonth, estimateUsage } from "@/lib/ration/insights";
 
 export type ItemPoint = { entitled: number; collected: number; used: number | null };
 
@@ -18,27 +18,8 @@ export type MonthPoint = {
   items: Record<RationItemId, ItemPoint>;
 };
 
-function latestPickupDate(pickups: PickupWithLines[], month: string): string | undefined {
-  return pickups
-    .filter((p) => p.month === month)
-    .map((p) => p.pickup_date)
-    .sort()
-    .at(-1);
-}
-
-/**
- * Mirrors the attribution rule in lib/ration/insights (checkinsForMonth is private there):
- * a check-in counts for `month` when it falls between that month's latest pickup and the next one's.
- */
-function hasCheckinFor(snapshot: Snapshot, month: string): boolean {
-  const from = latestPickupDate(snapshot.pickups, month);
-  if (!from) return false;
-  const until = latestPickupDate(snapshot.pickups, addMonths(month, 1));
-  return snapshot.checkins.some((c) => c.checkin_date >= from && (!until || c.checkin_date < until));
-}
-
 function monthPoint(snapshot: Snapshot, month: string): MonthPoint {
-  const hasCheckin = hasCheckinFor(snapshot, month);
+  const hasCheckin = checkinsForMonth(snapshot, month).length > 0;
   const collected = collectedByItem(snapshot.pickups, month);
   const usage = hasCheckin ? estimateUsage(snapshot, month) : null;
 

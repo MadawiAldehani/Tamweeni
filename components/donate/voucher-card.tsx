@@ -89,7 +89,7 @@ export function VoucherCard({ code, donations, household, status, onToggleStatus
             </li>
           ))}
         </ul>
-        <p className="tabular border-t border-dashed border-foreground/10 pt-3 text-sm font-medium text-warm">
+        <p className="tabular border-t border-dashed border-foreground/10 pt-3 text-sm font-medium text-warm-ink">
           <bdi>
             {t("pages.donate.voucher.totals", {
               kg: formatNumber(totals.kg, locale, 1),

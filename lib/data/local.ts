@@ -1,6 +1,7 @@
 // Mock-mode store: the whole Snapshot lives in memory and is written through to
 // localStorage on every mutation. No env vars, no network — this is the demo path.
 import { buildDemoSnapshot } from "@/lib/demo/seed";
+import type { Locale } from "@/lib/i18n/config";
 import { generateVoucherCode } from "@/lib/ration/voucher";
 import type { RationItemId } from "@/lib/ration/catalog";
 import type {
@@ -150,8 +151,8 @@ export class LocalStore implements DataStore {
     this.commit();
   }
 
-  async loadDemoFamily(): Promise<void> {
-    this.db = buildDemoSnapshot(new Date());
+  async loadDemoFamily(locale: Locale = "en"): Promise<void> {
+    this.db = buildDemoSnapshot(new Date(), undefined, locale);
     this.commit();
   }
 

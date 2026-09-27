@@ -36,7 +36,7 @@ export function LanguageCards() {
               )}
             >
               <span className={cn("text-lg font-semibold", isArabic && "font-ar")}>{t(cards[option].nameKey)}</span>
-              <span className={cn("text-xs", selected ? "text-white/75" : "text-muted-foreground", isArabic && "font-ar")}>
+              <span className={cn("text-xs", selected ? "text-white/85" : "text-muted-foreground", isArabic && "font-ar")}>
                 {t(cards[option].sampleKey)}
               </span>
               {selected && (

@@ -4,7 +4,7 @@ import { ChevronRight, Loader2, Sparkles, UsersRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { useData } from "@/lib/data/provider";
-import { useT } from "@/lib/i18n/provider";
+import { useLanguage } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 
 type ChoiceProps = {
@@ -46,7 +46,7 @@ type StartChooserProps = {
 
 /** "Demo family or my own household?" — the fork every new visitor takes. */
 export function StartChooser({ email, onSetup }: StartChooserProps) {
-  const t = useT();
+  const { t, locale } = useLanguage();
   const router = useRouter();
   const { isMock, mutate } = useData();
   const [busy, setBusy] = useState(false);
@@ -56,7 +56,7 @@ export function StartChooser({ email, onSetup }: StartChooserProps) {
     setBusy(true);
     setFailed(false);
     try {
-      await mutate((s) => s.loadDemoFamily());
+      await mutate((s) => s.loadDemoFamily(locale));
       router.replace("/home");
     } catch {
       setFailed(true);

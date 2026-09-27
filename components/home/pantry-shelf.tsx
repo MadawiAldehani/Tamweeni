@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import { ItemIcon } from "@/components/common/item-icon";
 import { formatNumber } from "@/lib/format";
 import { localized, useLanguage } from "@/lib/i18n/provider";
-import type { RationUnit } from "@/lib/ration/catalog";
+import { unitFor } from "@/lib/plan/units";
 import type { MonthSummary } from "@/lib/ration/entitlement";
 
 type PantryShelfProps = {
@@ -17,7 +17,6 @@ type PantryShelfProps = {
 export function PantryShelf({ summary, memberCount }: PantryShelfProps) {
   const { t, locale } = useLanguage();
 
-  const unitLabel = (unit: RationUnit) => (unit === "can" ? t("units.cans") : t(`units.${unit}`));
   const n = (value: number) => formatNumber(value, locale, 1);
 
   return (
@@ -32,7 +31,7 @@ export function PantryShelf({ summary, memberCount }: PantryShelfProps) {
       <ul className="stagger no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [scroll-padding-inline:1rem]">
         {summary.items.map((row, index) => {
           const name = localized(row.item, "name", locale);
-          const unit = unitLabel(row.item.unit);
+          const unit = unitFor(row.item.unit, row.collectedQty, t);
           const share = row.entitledQty > 0 ? Math.min(1, row.collectedQty / row.entitledQty) : 0;
           return (
             <li

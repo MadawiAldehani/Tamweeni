@@ -130,7 +130,7 @@ export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklis
             nativeButton={false}
             size="lg"
             variant="secondary"
-            className="pressable h-12 rounded-xl bg-warm/15 text-base text-warm hover:bg-warm/25"
+            className="pressable h-12 rounded-xl bg-warm/15 text-base text-warm-ink hover:bg-warm/25"
             render={<Link href={`/donate?plan=${plan.month}`} />}
           >
             <HeartHandshake aria-hidden="true" />

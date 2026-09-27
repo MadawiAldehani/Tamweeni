@@ -2,6 +2,7 @@
 // behind RLS and receipt photos in the private "receipts" bucket. Runs in the browser.
 import { getSupabaseBrowserClient, type TamweeniClient } from "@/lib/supabase/client";
 import { buildDemoSnapshot } from "@/lib/demo/seed";
+import type { Locale } from "@/lib/i18n/config";
 import { generateVoucherCode } from "@/lib/ration/voucher";
 import type { RationItemId } from "@/lib/ration/catalog";
 import type {
@@ -200,10 +201,10 @@ export class SupabaseStore implements DataStore {
   }
 
   /** Replaces the user's household with the seeded Al-Sabah family, minting real uuids for every row. */
-  async loadDemoFamily(): Promise<void> {
+  async loadDemoFamily(locale: Locale = "en"): Promise<void> {
     const user = await this.requireUser();
     await this.resetAll();
-    const demo = buildDemoSnapshot(new Date(), { householdId: uuid(), ownerUserId: user.id });
+    const demo = buildDemoSnapshot(new Date(), { householdId: uuid(), ownerUserId: user.id }, locale);
     const household = demo.household!;
     const memberIds = new Map(demo.members.map((m) => [m.id, uuid()]));
     const pickupIds = new Map(demo.pickups.map((p) => [p.id, uuid()]));

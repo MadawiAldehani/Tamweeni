@@ -5,6 +5,7 @@ import { collectedByItem, monthSummary } from "@/lib/ration/entitlement";
 import { addMonths, currentMonth, formatKD, formatNumber, todayISO } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
 import type { TKey, TVars } from "@/lib/i18n/translate";
+import { unitFor } from "@/lib/plan/units";
 import type { PantryCheckin, PickupWithLines, Snapshot } from "@/lib/data/types";
 
 export type NextStep = "scan" | "checkin" | "plan" | "donate";
@@ -28,15 +29,20 @@ function daysBetween(fromISO: string, toISO: string): number {
   return Math.round((Date.UTC(ty, tm - 1, td) - Date.UTC(fy, fm - 1, fd)) / 86_400_000);
 }
 
-function latestPickup(pickups: PickupWithLines[], month: string): PickupWithLines | undefined {
+/** The month's latest pickup (by date); undefined when the month has none. */
+export function latestPickup(pickups: PickupWithLines[], month: string): PickupWithLines | undefined {
   return pickups
     .filter((p) => p.month === month)
     .sort((a, b) => a.pickup_date.localeCompare(b.pickup_date))
     .at(-1);
 }
 
-/** Check-ins between `month`'s latest pickup and the next month's (a pickup on the 25th checked in on the 2nd still counts). */
-function checkinsForMonth(snapshot: Snapshot, month: string): PantryCheckin[] {
+/**
+ * THE attribution rule, shared by the home insight, the charts, the plan suggestion and /impact:
+ * a check-in counts for `month` when it falls between that month's latest pickup and the next
+ * month's (a pickup on the 25th checked in on the 2nd still counts).
+ */
+export function checkinsForMonth(snapshot: Snapshot, month: string): PantryCheckin[] {
   const pickup = latestPickup(snapshot.pickups, month);
   if (!pickup) return [];
   const next = latestPickup(snapshot.pickups, addMonths(month, 1));
@@ -46,7 +52,7 @@ function checkinsForMonth(snapshot: Snapshot, month: string): PantryCheckin[] {
 }
 
 /** Latest check-in per item attributed to `month`. */
-function latestCheckins(snapshot: Snapshot, month: string): Map<RationItemId, PantryCheckin> {
+export function latestCheckins(snapshot: Snapshot, month: string): Map<RationItemId, PantryCheckin> {
   const latest = new Map<RationItemId, PantryCheckin>();
   for (const checkin of checkinsForMonth(snapshot, month)) {
     const current = latest.get(checkin.item_id);
@@ -112,13 +118,6 @@ export function nextStep(snapshot: Snapshot, now: Date): NextStep {
   return "checkin";
 }
 
-function unitLabel(id: RationItemId, t: (key: TKey, vars?: TVars) => string): string {
-  const unit = getItem(id).unit;
-  if (unit === "liter") return t("units.liter");
-  if (unit === "can") return t("units.cans");
-  return t("units.kg");
-}
-
 export function homeInsight(
   snapshot: Snapshot,
   now: Date,
@@ -142,7 +141,7 @@ export function homeInsight(
         collected: n(best.usage.collected),
         used: n(best.usage.used),
         surplus: n(best.usage.surplus),
-        unit: unitLabel(best.id, t),
+        unit: unitFor(item.unit, best.usage.surplus, t),
       });
     }
   }

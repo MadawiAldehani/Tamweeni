@@ -58,7 +58,7 @@ export function DonatePicker({ prefill, onPledge }: DonatePickerProps) {
   return (
     <div className="stagger flex flex-col gap-3">
       <div style={at(0)} className="flex flex-col gap-1.5">
-        <span className="tabular inline-flex w-fit items-center gap-1.5 rounded-full bg-warm/15 px-3 py-1 text-xs font-medium text-warm">
+        <span className="tabular inline-flex w-fit items-center gap-1.5 rounded-full bg-warm/15 px-3 py-1 text-xs font-medium text-warm-ink">
           <HeartHandshake className="size-3.5 shrink-0" aria-hidden="true" />
           <bdi>{t("pages.donate.picker.surplusFor", { month })}</bdi>
         </span>

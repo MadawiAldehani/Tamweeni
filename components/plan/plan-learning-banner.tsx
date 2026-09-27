@@ -23,7 +23,7 @@ export function PlanLearningBanner({ checkinReady, style }: PlanLearningBannerPr
         <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
         <div className="flex min-w-0 flex-col gap-1.5">
           <p className="font-medium leading-snug">{t("pages.plan.learning.title")}</p>
-          <p className="text-sm leading-snug text-accent-foreground/80">{t("pages.plan.learning.body")}</p>
+          <p className="text-sm leading-snug text-accent-foreground">{t("pages.plan.learning.body")}</p>
           {checkinReady ? (
             <Link href="/pantry" className="pressable inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary">
               {t("pages.plan.learning.checkin")}

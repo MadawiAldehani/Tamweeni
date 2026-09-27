@@ -4,12 +4,12 @@ import type { CSSProperties } from "react";
 
 import { ItemIcon } from "@/components/common/item-icon";
 import type { PantryRow } from "@/components/pantry/pantry-math";
-import { unitLabel } from "@/components/pantry/unit-label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { formatNumber } from "@/lib/format";
 import { localized, useLanguage } from "@/lib/i18n/provider";
+import { unitFor } from "@/lib/plan/units";
 import { roundToStep } from "@/lib/ration/consumption";
 
 type PantryItemSliderProps = {
@@ -26,7 +26,7 @@ export function PantryItemSlider({ row, value, onChange, style }: PantryItemSlid
   const name = localized(item, "name", locale);
   const decimals = item.unit === "kg" ? 2 : 0;
   const n = (qty: number) => formatNumber(qty, locale, decimals);
-  const unit = unitLabel(item.unit, value, t);
+  const unit = unitFor(item.unit, value, t);
   const used = Math.max(0, collected - value);
   const half = Math.min(collected, roundToStep(collected / 2, step));
 
@@ -64,7 +64,7 @@ export function PantryItemSlider({ row, value, onChange, style }: PantryItemSlid
         </div>
 
         <p className="tabular text-xs text-muted-foreground" aria-live="polite">
-          <bdi>{t("pages.pantry.item.used", { used: n(used), unit: unitLabel(item.unit, used, t) })}</bdi>
+          <bdi>{t("pages.pantry.item.used", { used: n(used), unit: unitFor(item.unit, used, t) })}</bdi>
         </p>
 
         <div className="flex flex-wrap gap-2">

@@ -50,7 +50,8 @@ export function ReviewStep({ receipt, initialLines, source, file, onSaved }: Rev
   const totals = useMemo(() => reviewTotals(lines), [lines]);
   const savable = isSavable(lines) && /^\d{4}-\d{2}-\d{2}$/.test(date);
   const nothingRead = source !== "manual" && receipt.lines.length === 0;
-  const allCollected = source === "manual" && initialLines.length === 0;
+  // Also true for a re-scan whose every line was clamped away (the month is already fully recorded).
+  const allCollected = initialLines.length === 0 && (source === "manual" || receipt.lines.length > 0);
   const hint = lines.some(isInvalid)
     ? t("pages.scan.review.fixHint")
     : totals.count === 0

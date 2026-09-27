@@ -47,7 +47,7 @@ export function PlanSummaryBar({ totals, saving, error, style, className, onSave
         {canDonate ? (
           <Button
             size="lg"
-            className="pressable h-12 flex-1 rounded-xl bg-warm/15 text-base text-warm hover:bg-warm/25"
+            className="pressable h-12 flex-1 rounded-xl bg-warm/15 text-base text-warm-ink hover:bg-warm/25"
             variant="secondary"
             disabled={saving}
             onClick={onDonate}

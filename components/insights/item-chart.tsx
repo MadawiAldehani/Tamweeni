@@ -13,7 +13,8 @@ import { SeriesTable, type SeriesColumn } from "@/components/insights/series-tab
 import { formatNumber, monthLabel } from "@/lib/format";
 import { localized, useLanguage } from "@/lib/i18n/provider";
 import type { MonthPoint } from "@/lib/insights/series";
-import type { RationItem, RationUnit } from "@/lib/ration/catalog";
+import { unitFor } from "@/lib/plan/units";
+import type { RationItem } from "@/lib/ration/catalog";
 
 type Row = { month: string; label: string; entitled: number; collected: number; used: number | null };
 
@@ -23,7 +24,8 @@ type ItemChartProps = { points: MonthPoint[]; item: RationItem; ready: boolean }
 export function ItemChart({ points, item, ready }: ItemChartProps) {
   const { t, locale, dir } = useLanguage();
   const name = localized(item, "name", locale);
-  const unit = unitLabel(item.unit, t);
+  // Axis/table unit is generic, so a qty ≠ 1 keeps "cans" plural.
+  const unit = unitFor(item.unit, 2, t);
   const n = (value: number) => formatNumber(value, locale, 1);
   const fmt = (value: unknown) => (typeof value === "number" ? n(value) : "");
 
@@ -82,8 +84,4 @@ export function ItemChart({ points, item, ready }: ItemChartProps) {
       }
     />
   );
-}
-
-function unitLabel(unit: RationUnit, t: ReturnType<typeof useLanguage>["t"]): string {
-  return unit === "can" ? t("units.cans") : t(`units.${unit}`);
 }

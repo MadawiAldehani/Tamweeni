@@ -10,7 +10,7 @@ import { AppHeader } from "@/components/shell/app-header";
 import { PageContainer } from "@/components/shell/page-container";
 import { Button } from "@/components/ui/button";
 import { useData } from "@/lib/data/provider";
-import { currentMonth } from "@/lib/format";
+import { currentMonth, todayISO } from "@/lib/format";
 import { useT } from "@/lib/i18n/provider";
 import { monthSummary } from "@/lib/ration/entitlement";
 import { fromEntitlement, toReviewLines, type ReviewLine, type ReviewSource, type ReviewTotals } from "@/lib/receipt/review";
@@ -38,9 +38,18 @@ export default function ScanPage() {
     setStep({ kind: "review", receipt, lines, source, key: Date.now() });
   }, []);
 
+  // Mirrors onManual: parsed lines are clamped to what is still outstanding, so scanning the same
+  // receipt twice (or "Scan another" after saving) never doubles the month.
   const onParsed = useCallback(
-    (receipt: ParsedReceipt, backend: ParseBackend) => toReview(receipt, toReviewLines(receipt), backend),
-    [toReview],
+    (receipt: ParsedReceipt, backend: ParseBackend) => {
+      const summary = monthSummary(snapshot.members, snapshot.pickups, (receipt.date ?? todayISO()).slice(0, 7));
+      const remaining = new Map(summary.items.map((r) => [r.item.id, r.remainingQty]));
+      const lines = toReviewLines(receipt)
+        .map((l) => (l.item_id ? { ...l, qty: Math.min(l.qty, remaining.get(l.item_id) ?? l.qty) } : l))
+        .filter((l) => !l.item_id || l.qty > 0);
+      toReview(receipt, lines, backend);
+    },
+    [toReview, snapshot.members, snapshot.pickups],
   );
 
   const onFile = (chosen: Blob) => {

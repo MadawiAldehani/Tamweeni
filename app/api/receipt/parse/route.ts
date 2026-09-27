@@ -6,8 +6,10 @@ import { parseReceiptWithClaude, type ReceiptMediaType } from "@/lib/receipt/cla
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-/** The Claude API per-image limit; the client downscales well below this anyway. */
-const MAX_BYTES = 5 * 1024 * 1024;
+/** Matches Vercel's 4.5 MB request cap (below the Claude 5 MB per-image limit); the client downscales well below this anyway. */
+const MAX_BYTES = 4.5 * 1024 * 1024;
+/** Multipart framing overhead allowed on top of MAX_BYTES when checking Content-Length. */
+const FRAMING_BYTES = 64 * 1024;
 const ALLOWED_TYPES: readonly ReceiptMediaType[] = ["image/jpeg", "image/png", "image/webp"];
 
 /** Cheap in-memory throttle so a leaked URL cannot burn the founder's credits in a loop. */
@@ -46,6 +48,12 @@ export async function POST(req: Request): Promise<NextResponse> {
   const caller = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
   if (isRateLimited(caller)) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
+
+  // formData() buffers the whole body: reject oversized requests before parsing (chunked bodies are caught below).
+  const declared = Number(req.headers.get("content-length") ?? 0);
+  if (declared > MAX_BYTES + FRAMING_BYTES) {
+    return NextResponse.json({ error: "invalid_image" }, { status: 413 });
   }
 
   let form: FormData;

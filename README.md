@@ -57,7 +57,9 @@ Supabase; without them it stays in mock mode.
 
 1. Create a project at supabase.com and enable email (magic link) auth.
 2. Run `supabase/migrations/0001_init.sql` (tables + RLS + the private `receipts`
-   storage bucket) and any later migrations in order, then `supabase/seed.sql` (the catalog).
+   storage bucket) and any later migrations in order — `0002_ration_items.sql` loads the ration
+   catalog and `0004_receipts_bucket_limits.sql` caps the bucket at 5 MB / images only, so nothing
+   else needs seeding (`supabase/seed.sql` is intentionally empty).
 3. Set the magic-link redirect to `https://<your-domain>/auth/callback`.
 4. Add `SUPABASE_SERVICE_ROLE_KEY` on the server only; `/api/impact` uses it to aggregate
    across households (it never reaches the browser).
@@ -76,7 +78,8 @@ network-first and never caches HTML, so deploys show up immediately.
 prices and market-price estimates. They were compiled from public sources in 2025 and may
 be outdated (quotas were recently cut, e.g. rice 6.25 → 5 kg, sugar 2 → 1 kg). Check every
 row against MOCI's current list, and re-run `npm run sample-receipt` if you change prices so
-the demo receipt matches. `supabase/seed.sql` mirrors the same rows for the database.
+the demo receipt matches. `supabase/migrations/0002_ration_items.sql` mirrors the same rows for
+the database (it is an upsert, so re-run it after editing the catalog).
 
 Meal-equivalence factors (`lib/ration/meals.ts`) and branch pack sizes
 (`lib/plan/packs.ts`) are approximations — edit freely.
@@ -107,7 +110,7 @@ lib/receipt/       parse types, matcher (OCR → items), ocr (Tesseract), claude
 lib/plan, lib/donate, lib/insights, lib/impact   screen-specific helpers (pure)
 lib/i18n/          dictionaries/en.json + ar.json, provider (client), translate (server-safe)
 lib/demo/seed.ts   the Al-Sabah demo family
-supabase/          migrations + seed.sql · types/database.ts mirrors the schema
+supabase/          migrations (0002 = catalog upsert, 0004 = bucket limits) · seed.sql intentionally empty · types/database.ts mirrors the schema
 public/demo/       the sample receipt (regenerate with npm run sample-receipt)
 scripts/           check-i18n (parity gate), i18n-add (add keys to both files), icons, sample receipt
 ```

@@ -10,12 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useData } from "@/lib/data/provider";
-import { useT } from "@/lib/i18n/provider";
+import { useLanguage } from "@/lib/i18n/provider";
 
 type Pending = "demo" | "reset" | null;
 
 export function DataCard() {
-  const t = useT();
+  const { t, locale } = useLanguage();
   const router = useRouter();
   const { store, mutate } = useData();
   const [dialog, setDialog] = useState<Pending>(null);
@@ -34,7 +34,7 @@ export function DataCard() {
   const loadDemo = async () => {
     setBusy("demo");
     try {
-      await mutate((s) => s.loadDemoFamily());
+      await mutate((s) => s.loadDemoFamily(locale));
       setDialog(null);
       flash(t("pages.settings.data.loadDemoDone"));
     } finally {

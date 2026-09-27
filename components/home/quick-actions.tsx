@@ -24,18 +24,24 @@ const plan: Action = { id: "plan", href: "/plan", emoji: "📝", circleTint: "bg
 const checkin: Action = { id: "checkin", href: "/pantry", emoji: "🧺", circleTint: "bg-secondary/60", labelKey: "pages.home.actions.checkin", hintKey: "pages.home.actions.checkinHint" };
 const donate: Action = { id: "donate", href: "/donate", emoji: "🤲", circleTint: "bg-warm/15", labelKey: "pages.home.actions.donate", hintKey: "pages.home.actions.donateHint" };
 
-/** Three tiles; the middle one is Plan unless a pantry check-in is the next step. */
-function actionsFor(nextStep: NextStep): Action[] {
-  return [scan, nextStep === "checkin" ? checkin : plan, donate];
+/** Three tiles; the middle one is Plan unless a pantry check-in is due or already possible (this month has a pickup). */
+function actionsFor(nextStep: NextStep, checkinReady: boolean): Action[] {
+  return [scan, nextStep === "checkin" || checkinReady ? checkin : plan, donate];
 }
 
-/** Scan / Plan (or Check-in) / Donate tiles; exactly one carries the "Next" badge. */
-export function QuickActions({ nextStep }: { nextStep: NextStep }) {
+type QuickActionsProps = {
+  nextStep: NextStep;
+  /** True once this month has a pickup: the check-in tile stays reachable even when Plan is the "Next" step. */
+  checkinReady: boolean;
+};
+
+/** Scan / Plan (or Check-in) / Donate tiles; at most one carries the "Next" badge. */
+export function QuickActions({ nextStep, checkinReady }: QuickActionsProps) {
   const t = useT();
 
   return (
     <div className="grid grid-cols-3 gap-3">
-      {actionsFor(nextStep).map((action) => {
+      {actionsFor(nextStep, checkinReady).map((action) => {
         const isNext = action.id === nextStep;
         return (
           <Link

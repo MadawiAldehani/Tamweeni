@@ -5,7 +5,6 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { ItemIcon } from "@/components/common/item-icon";
-import { unitLabel } from "@/components/pantry/unit-label";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +12,7 @@ import type { UsedItem } from "@/components/pantry/pantry-math";
 import { useSnapshot } from "@/lib/data/provider";
 import { currentMonth, formatNumber } from "@/lib/format";
 import { localized, useLanguage } from "@/lib/i18n/provider";
+import { unitFor } from "@/lib/plan/units";
 import { getItem } from "@/lib/ration/catalog";
 import { estimateItemUsage, monthlyUsageFor } from "@/lib/ration/consumption";
 
@@ -73,7 +73,7 @@ export function PantrySuccess({ used, now }: PantrySuccessProps) {
                     <bdi className="tabular text-sm font-semibold text-primary">
                       {t("pages.pantry.success.usageRow", {
                         qty: formatNumber(monthly, locale, 1),
-                        unit: unitLabel(item.unit, monthly, t),
+                        unit: unitFor(item.unit, monthly, t),
                       })}
                     </bdi>
                   )}

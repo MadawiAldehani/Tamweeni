@@ -33,7 +33,7 @@ export function SadaqaCounter({ donations }: { donations: Donation[] }) {
             />
           </bdi>
           {hasGiven ? (
-            <span className="tabular ms-2 text-sm font-medium text-warm">
+            <span className="tabular ms-2 text-sm font-medium text-warm-ink">
               <bdi>{t("pages.home.sadaqa.meals", { meals: formatNumber(totals.meals, locale, 0) })}</bdi>
             </span>
           ) : null}
@@ -47,7 +47,7 @@ export function SadaqaCounter({ donations }: { donations: Donation[] }) {
         </p>
       </div>
       {/* The cultural phrase, shown in Arabic in both locales. */}
-      <span lang="ar" className="font-ar shrink-0 text-xs font-medium text-warm">
+      <span lang="ar" className="font-ar shrink-0 text-xs font-medium text-warm-ink">
         {t("pages.home.sadaqa.jariya")}
       </span>
     </div>

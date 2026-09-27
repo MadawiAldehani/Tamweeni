@@ -131,13 +131,13 @@ export function ReviewLine({ line, index, autoFocus = false, onChange, onRemove 
               {t("pages.scan.review.confirmed")}
             </Badge>
           ) : (
-            <Badge variant={unconfirmed ? "outline" : "secondary"} className={cn("tabular", unconfirmed && "border-warning/40 text-warning")}>
+            <Badge variant={unconfirmed ? "outline" : "secondary"} className={cn("tabular", unconfirmed && "border-warning/40 text-warning-ink")}>
               <bdi>{t("pages.scan.review.confidence", { percent: Math.round(line.confidence * 100) })}</bdi>
             </Badge>
           )}
           {unconfirmed ? (
             <>
-              <span className="text-xs font-medium text-warning">{t("pages.scan.review.pleaseConfirm")}</span>
+              <span className="text-xs font-medium text-warning-ink">{t("pages.scan.review.pleaseConfirm")}</span>
               <Button size="sm" variant="outline" className="pressable ms-auto h-9 rounded-lg px-3" onClick={() => onChange({ ...line, confirmed: true })}>
                 <Check aria-hidden="true" />
                 {t("pages.scan.review.looksRight")}

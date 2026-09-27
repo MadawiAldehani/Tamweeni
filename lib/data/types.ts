@@ -1,6 +1,7 @@
 // Domain types and the storage contract. Two implementations exist:
 // lib/data/local.ts (localStorage, "mock mode") and lib/data/supabase.ts.
 // Field names mirror the Postgres columns in supabase/migrations so no mapping layer is needed.
+import type { Locale } from "@/lib/i18n/config";
 import type { RationItemId } from "@/lib/ration/catalog";
 import type { Governorate } from "@/lib/ration/governorates";
 
@@ -168,8 +169,8 @@ export interface DataStore {
   createDonations(input: DonationInput): Promise<string>;
   setDonationStatus(voucherCode: string, status: DonationStatus): Promise<void>;
 
-  /** Replaces the current household with the seeded demo family (both modes). */
-  loadDemoFamily(): Promise<void>;
+  /** Replaces the current household with the seeded demo family (both modes), named in the family's language. */
+  loadDemoFamily(locale?: Locale): Promise<void>;
   /** Deletes the household and all its data (local: clears storage). */
   resetAll(): Promise<void>;
 }

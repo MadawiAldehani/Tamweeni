@@ -51,7 +51,9 @@
     "monthProgress": "Month progress",
     "daysLeftLabel": "days left",
     "oneDayLeftLabel": "day left",
-    "lastDayLabel": "last day"
+    "lastDayLabel": "last day",
+    "twoDaysLeft": "2 days left",
+    "daysLeftFew": "{count} days left"
   },
   "units": {
     "kg": "kg",

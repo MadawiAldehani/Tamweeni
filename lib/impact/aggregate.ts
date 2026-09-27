@@ -1,13 +1,13 @@
 // Live national aggregates for /impact. Server only (see lib/impact/load.ts for the
 // service-role reads). Reuses the same per-household maths the app shows each family:
 // a pooled Σ(collected − used) ÷ Σ collected over household-months that have a check-in.
-import type { PantryCheckin, PickupWithLines, Snapshot } from "@/lib/data/types";
+import type { Snapshot } from "@/lib/data/types";
 import { addMonths, currentMonth } from "@/lib/format";
 import type { GovernorateImpact, ImpactStats } from "@/lib/impact/types";
 import { getItem } from "@/lib/ration/catalog";
 import { subsidyValue } from "@/lib/ration/entitlement";
 import { GOVERNORATE_IDS, type Governorate } from "@/lib/ration/governorates";
-import { estimateUsage } from "@/lib/ration/insights";
+import { checkinsForMonth, estimateUsage } from "@/lib/ration/insights";
 import { loadSnapshots } from "@/lib/impact/load";
 
 /** A governorate's rate is published only once this many households have usable data. */
@@ -16,27 +16,13 @@ const MONTHS_BACK = 3;
 
 type Totals = { collected: number; used: number };
 
-function latestPickup(pickups: PickupWithLines[], month: string): PickupWithLines | undefined {
-  return pickups.filter((p) => p.month === month).sort((a, b) => a.pickup_date.localeCompare(b.pickup_date)).at(-1);
-}
-
-/** Mirrors insights.ts: a month "has a check-in" when one falls between its pickup and the next month's. */
-function hasCheckin(snapshot: Snapshot, month: string): boolean {
-  const pickup = latestPickup(snapshot.pickups, month);
-  if (!pickup) return false;
-  const next = latestPickup(snapshot.pickups, addMonths(month, 1));
-  return snapshot.checkins.some(
-    (c: PantryCheckin) => c.checkin_date >= pickup.pickup_date && (!next || c.checkin_date < next.pickup_date),
-  );
-}
-
 /** Σ collected and Σ used over the household-months (last 3 months) that have a check-in. */
 function householdTotals(snapshot: Snapshot, months: string[]): Totals | null {
   let collected = 0;
   let used = 0;
   let any = false;
   for (const month of months) {
-    if (!hasCheckin(snapshot, month)) continue;
+    if (checkinsForMonth(snapshot, month).length === 0) continue;
     any = true;
     for (const usage of estimateUsage(snapshot, month).values()) {
       collected += usage.collected;

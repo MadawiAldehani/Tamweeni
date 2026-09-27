@@ -147,12 +147,17 @@ html[lang="ar"] {
 :root {
   --warm: #c97b4a;
   --warm-foreground: #ffffff;
+  /* Darker inks for terracotta / amber used as TEXT or a solid button (WCAG AA ≥ 4.5:1 on white and tints). */
+  --warm-ink: #a85d31;
+  --warning-ink: #8a5a14;
 }
 
 /* Tailwind v4 merges multiple @theme blocks; this exposes bg-warm, text-warm, bg-warm/15 … */
 @theme inline {
   --color-warm: var(--warm);
   --color-warm-foreground: var(--warm-foreground);
+  --color-warm-ink: var(--warm-ink);
+  --color-warning-ink: var(--warning-ink);
 }
 
 @keyframes rise {

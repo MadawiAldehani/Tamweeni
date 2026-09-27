@@ -9,10 +9,11 @@
 //     since (avg_usage × days / daysInMonth), whichever month that check-in belongs to.
 // The suggestion is rounded UP to the pack step, so a small shortfall never becomes zero.
 // Delete the pro-rating in `monthlyUsageFor` if you prefer the literal formula.
-import type { PantryCheckin, PickupWithLines, Snapshot } from "@/lib/data/types";
+import type { Snapshot } from "@/lib/data/types";
 import { addMonths, currentMonth, todayISO } from "@/lib/format";
 import { RATION_ITEMS, type RationItem, type RationItemId } from "@/lib/ration/catalog";
 import { collectedByItem, entitledQty } from "@/lib/ration/entitlement";
+import { latestCheckins, latestPickup } from "@/lib/ration/insights";
 
 const HEADROOM = 1.1;
 const MIN_DAYS = 7;
@@ -28,29 +29,15 @@ function daysInMonth(month: string): number {
   return new Date(y, m, 0).getDate();
 }
 
-/** Latest pickup date in a month, or null when the month has no pickup. */
-function pickupDateFor(pickups: PickupWithLines[], month: string): string | null {
-  const dates = pickups.filter((p) => p.month === month).map((p) => p.pickup_date).sort();
-  return dates.at(-1) ?? null;
-}
-
-/** The latest check-in for an item taken on/after `since` (the month's pickup). */
-function latestCheckin(checkins: PantryCheckin[], itemId: RationItemId, since: string, before: string | null): PantryCheckin | null {
-  const inWindow = checkins
-    .filter((c) => c.item_id === itemId && c.checkin_date >= since && (!before || c.checkin_date < before))
-    .sort((a, b) => a.checkin_date.localeCompare(b.checkin_date));
-  return inWindow.at(-1) ?? null;
-}
-
 export type MonthUsage = { month: string; collected: number; remaining: number; used: number; monthlyUsage: number; checkinDate: string };
 
-/** Usage of one item in one month, pro-rated to a full month; null without a check-in. */
+/** Usage of one item in one month, pro-rated to a full month; null without a check-in (attribution rule: insights.ts). */
 export function monthlyUsageFor(snapshot: Snapshot, itemId: RationItemId, month: string): MonthUsage | null {
-  const pickupDate = pickupDateFor(snapshot.pickups, month);
-  if (!pickupDate) return null;
-  const nextPickup = pickupDateFor(snapshot.pickups, addMonths(month, 1));
-  const checkin = latestCheckin(snapshot.checkins, itemId, pickupDate, nextPickup);
+  const pickup = latestPickup(snapshot.pickups, month);
+  if (!pickup) return null;
+  const checkin = latestCheckins(snapshot, month).get(itemId);
   if (!checkin) return null;
+  const pickupDate = pickup.pickup_date;
 
   const collected = collectedByItem(snapshot.pickups, month).get(itemId) ?? 0;
   const remaining = Math.min(collected, Math.max(0, checkin.qty_remaining));

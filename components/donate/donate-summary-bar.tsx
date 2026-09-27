@@ -43,7 +43,7 @@ export function DonateSummaryBar({ totals, pledging, error, style, className, on
       {/* Terracotta is reserved for giving: this is the one primary action that wears it. */}
       <Button
         size="lg"
-        className="pressable h-12 rounded-xl bg-warm text-base text-warm-foreground hover:bg-warm/90"
+        className="pressable h-12 rounded-xl bg-warm-ink text-base text-white hover:bg-warm-ink/90"
         disabled={empty || pledging}
         onClick={onPledge}
       >

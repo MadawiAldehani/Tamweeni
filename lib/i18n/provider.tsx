@@ -16,6 +16,7 @@ import {
   isLocale,
   type Locale,
 } from "./config";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { translate, type TKey, type TVars } from "./translate";
 
 export { localized, translate } from "./translate";
@@ -87,8 +88,12 @@ export function LanguageProvider({
     [locale, setLocale],
   );
 
+  // Base UI reads direction from its own context, not from <html dir>: without this the
+  // Slider (and Select/Dialog keyboard handling) would behave as LTR in Arabic.
   return (
-    <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
+    <LanguageContext.Provider value={value}>
+      <DirectionProvider direction={value.dir}>{children}</DirectionProvider>
+    </LanguageContext.Provider>
   );
 }
 

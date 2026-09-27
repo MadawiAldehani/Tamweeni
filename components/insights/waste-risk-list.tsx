@@ -11,12 +11,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { formatNumber } from "@/lib/format";
 import { localized, useLanguage } from "@/lib/i18n/provider";
 import type { WasteRow } from "@/lib/insights/series";
-import type { RationUnit } from "@/lib/ration/catalog";
+import { unitFor } from "@/lib/plan/units";
 
 /** Ranked list of items by the share left unused, with a thin warm bar; the top row links to donating. */
 export function WasteRiskList({ rows }: { rows: WasteRow[] }) {
   const { t, locale } = useLanguage();
-  const unitLabel = (unit: RationUnit) => (unit === "can" ? t("units.cans") : t(`units.${unit}`));
 
   return (
     <Card>
@@ -41,7 +40,7 @@ export function WasteRiskList({ rows }: { rows: WasteRow[] }) {
           <ol className="stagger flex flex-col divide-y divide-border/60">
             {rows.map((row, index) => {
               const name = localized(row.item, "name", locale);
-              const unit = unitLabel(row.item.unit);
+              const unit = unitFor(row.item.unit, row.unused, t);
               const pct = Math.round(row.unusedShare * 100);
               const qty = formatNumber(row.unused, locale, 1);
               // Arabic uses the dual for two months, so "2" never appears as a digit there.
@@ -76,7 +75,7 @@ export function WasteRiskList({ rows }: { rows: WasteRow[] }) {
                       {index === 0 && row.unused > 0 ? (
                         <>
                           {" · "}
-                          <Link href="/donate" className="inline-flex items-center gap-0.5 font-medium text-warm underline-offset-4 hover:underline">
+                          <Link href="/donate" className="inline-flex items-center gap-0.5 font-medium text-warm-ink underline-offset-4 hover:underline">
                             {t("pages.insights.waste.donate")}
                             <ArrowRight className="size-3 rtl:-scale-x-100" aria-hidden="true" />
                           </Link>

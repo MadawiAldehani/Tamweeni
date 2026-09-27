@@ -31,9 +31,11 @@ export function MonthHeroCard({ summary, now, household, ringValue }: MonthHeroC
         ? t("common.lastDay")
         : daysLeft === 1
           ? t("common.oneDayLeft")
-          : t("common.daysLeft", { count: daysLeft });
+          : daysLeft === 2
+            ? t("common.twoDaysLeft")
+            : t(daysLeft <= 10 ? "common.daysLeftFew" : "common.daysLeft", { count: daysLeft });
   const greetingText = t(greeting?.key ?? "pages.home.greeting.morning");
-  const pct = Math.round((summary.entitledKD ? summary.collectedKD / summary.entitledKD : 0) * 100);
+  const pct = Math.min(100, Math.round((summary.entitledKD ? summary.collectedKD / summary.entitledKD : 0) * 100));
 
   return (
     <section className="bg-hero relative overflow-hidden rounded-2xl text-primary-foreground shadow-[0_16px_40px_-20px_rgba(31,111,74,0.55)]">
@@ -65,7 +67,7 @@ export function MonthHeroCard({ summary, now, household, ringValue }: MonthHeroC
 
         <div className="flex items-end justify-between gap-4">
           <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/70">
+            <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/85">
               {t("pages.home.hero.entitled")}
             </p>
             <bdi>
@@ -76,7 +78,7 @@ export function MonthHeroCard({ summary, now, household, ringValue }: MonthHeroC
                 className="tabular block whitespace-nowrap text-[2.5rem] font-semibold leading-none tracking-tight"
               />
             </bdi>
-            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/75">
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/85">
               <span>
                 {t("pages.home.hero.collected")}{" "}
                 <bdi className="font-medium text-white">{formatKD(summary.collectedKD, locale)}</bdi>
@@ -99,7 +101,7 @@ export function MonthHeroCard({ summary, now, household, ringValue }: MonthHeroC
             <span className="tabular text-2xl font-semibold leading-none">
               <bdi>{pct}%</bdi>
             </span>
-            <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.06em] text-white/75">
+            <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.06em] text-white/85">
               {t("pages.home.hero.collectedLabel")}
             </span>
           </ProgressRing>
