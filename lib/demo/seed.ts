@@ -18,12 +18,12 @@ const DEMO_NAMES: Record<Locale, { household: string; coop: string; members: rea
   en: {
     household: "Abdullah family",
     coop: "Salmiya Co-op",
-    members: ["Fahad", "Noura", "Abdullah", "Sara", "Yousef", "Dana", "Lulwa"],
+    members: ["Abdullah", "Noura", "Fahad", "Sara", "Yousef", "Dana", "Lulwa"],
   },
   ar: {
     household: "عائلة عبدالله",
     coop: "جمعية السالمية",
-    members: ["فهد", "نورة", "عبدالله", "سارة", "يوسف", "دانة", "لولوة"],
+    members: ["عبدالله", "نورة", "فهد", "سارة", "يوسف", "دانة", "لولوة"],
   },
 };
 
