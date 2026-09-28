@@ -10,10 +10,10 @@ values
   ('sugar',         'Sugar',            'سكر',              'kg',    1,    0.09, 0.4,  'all'),
   ('oil',           'Cooking oil',      'زيت طعام',         'liter', 3,    1.05, 1.8,  'all'),
   ('milk_powder',   'Milk powder',      'حليب بودرة',       'kg',    2.27, 1.05, 3.5,  'all'),
-  ('milk_longlife', 'Long-life milk',   'حليب طويل الأمد',  'liter', 6,    0.25, 0.45, 'all'),
+  ('milk_longlife', 'Long-life milk',   'حليب طويل الأمد',  'liter', 6,    0.300, 0.45, 'all'),
   ('tomato_paste',  'Tomato paste',     'معجون طماطم',      'can',   4,    0.27, 0.35, 'all'),
   ('lentils',       'Lentils',          'عدس',              'kg',    0.3,  0.27, 0.7,  'all'),
-  ('chicken',       'Frozen chicken',   'دجاج مجمد',        'kg',    3,    0.5,  1.2,  'all'),
+  ('chicken',       'Frozen chicken',   'دجاج مجمد',        'kg',    3,    0.600,  1.2,  'all'),
   ('dates',         'Dates',            'تمر',              'kg',    0.5,  0.5,  1.5,  'all'),
   ('infant_milk',   'Infant milk',      'حليب أطفال',       'can',   8,    0.9,  3.0,  'infant'),
   ('infant_food',   'Infant nutrients', 'مغذيات أطفال',     'can',   2,    0.9,  2.5,  'infant')

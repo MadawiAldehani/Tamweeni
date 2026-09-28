@@ -74,6 +74,16 @@ network-first and never caches HTML, so deploys show up immediately.
 
 ## ⚠️ Verify these numbers before launch
 
+Official source: MOCI publishes the price list "أصناف السلع التموينية وأسعارها 2026" at
+https://www.moci.gov.kw/ar/important-links/asaar-o-anoaa-lmntgt-lghthy-ltmoyn/ (116 items,
+prices only — no per-person quotas). Checked 28 Sept 2026: rice 0.120/kg, sugar 0.090/kg,
+lentils 0.270/kg, oil 1.050/pack, milk powder 1.050/pack, tomato paste 0.270/bundle, chicken
+0.555–0.630/kg (catalog uses 0.600), KDD/KDCOW 1 L milk 0.300 (a *discounted* item, not
+subsidised), infant milk 0.435–2.560/can by brand. **Open questions:** the per-person quotas
+(6.25 vs 5 kg rice, 2 vs 1 kg sugar) are not in the official PDF — confirm on your own card in
+Sahel; dates do not appear on the 2026 list; the milk-powder and tomato-paste pack sizes need
+checking against the 1.050 and 0.270 pack prices.
+
 `lib/ration/catalog.ts` is the single source of truth for per-person quotas, subsidised
 prices and market-price estimates. They were compiled from public sources in 2025 and may
 be outdated (quotas were recently cut, e.g. rice 6.25 → 5 kg, sugar 2 → 1 kg). Check every
