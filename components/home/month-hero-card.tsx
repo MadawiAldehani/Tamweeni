@@ -5,9 +5,9 @@ import { ProgressRing } from "@/components/common/progress-ring";
 import { SaduPattern } from "@/components/common/sadu-pattern";
 import { greetingFor } from "@/components/home/greeting";
 import type { Household } from "@/lib/data/types";
-import { currentMonth, daysLeftInMonth, formatKD, formatKDWhole, hijriMonthLabel, monthLabel } from "@/lib/format";
+import { currentMonth, daysLeftInMonth, formatKDWhole, formatNumber, hijriMonthLabel, monthLabel } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/provider";
-import type { MonthSummary } from "@/lib/ration/entitlement";
+import { quantityTotals, type MonthSummary } from "@/lib/ration/entitlement";
 
 type MonthHeroCardProps = {
   summary: MonthSummary;
@@ -35,7 +35,9 @@ export function MonthHeroCard({ summary, now, household, ringValue }: MonthHeroC
             ? t("common.twoDaysLeft")
             : t(daysLeft <= 10 ? "common.daysLeftFew" : "common.daysLeft", { count: daysLeft });
   const greetingText = t(greeting?.key ?? "pages.home.greeting.morning");
-  const pct = Math.min(100, Math.round((summary.entitledKD ? summary.collectedKD / summary.entitledKD : 0) * 100));
+  const qty = quantityTotals(summary.items);
+  const kg = (n: number) => `${formatNumber(n, locale, 1)} ${t("units.kg")}`;
+  const pct = Math.min(100, Math.round((qty.entitledKg ? qty.collectedKg / qty.entitledKg : 0) * 100));
 
   return (
     <section className="bg-hero relative overflow-hidden rounded-2xl text-primary-foreground shadow-[0_16px_40px_-20px_rgba(31,111,74,0.55)]">
@@ -72,22 +74,28 @@ export function MonthHeroCard({ summary, now, household, ringValue }: MonthHeroC
             </p>
             <bdi>
               <CountUp
-                value={summary.entitledKD}
-                format={(n) => formatKDWhole(n, locale)}
+                value={qty.entitledKg}
+                format={kg}
                 durationMs={900}
                 className="tabular block whitespace-nowrap text-[2.5rem] font-semibold leading-none tracking-tight"
               />
             </bdi>
+            {qty.entitledCans > 0 ? (
+              <bdi className="tabular text-sm text-white/85">{t("pages.home.hero.plusCans", { count: formatNumber(qty.entitledCans, locale, 0) })}</bdi>
+            ) : null}
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/85">
               <span>
                 {t("pages.home.hero.collected")}{" "}
-                <bdi className="font-medium text-white">{formatKD(summary.collectedKD, locale)}</bdi>
+                <bdi className="font-medium text-white">{kg(qty.collectedKg)}</bdi>
               </span>
               <span>
                 {t("pages.home.hero.stillYours")}{" "}
-                <bdi className="font-medium text-secondary">{formatKD(summary.remainingKD, locale)}</bdi>
+                <bdi className="font-medium text-secondary">{kg(qty.remainingKg)}</bdi>
               </span>
             </div>
+            <p className="mt-1 text-xs text-white/75">
+              <bdi>{t("pages.home.hero.worth", { kd: formatKDWhole(summary.entitledKD, locale) })}</bdi>
+            </p>
           </div>
 
           <ProgressRing

@@ -71,3 +71,28 @@ export function monthSummary(members: Member[], pickups: PickupWithLines[], mont
 export function monthlySubsidyKD(members: Member[]): number {
   return RATION_ITEMS.reduce((sum, item) => sum + subsidyValue(item, entitledQty(item, members)), 0);
 }
+
+export type QuantityTotals = {
+  entitledKg: number;
+  collectedKg: number;
+  remainingKg: number;
+  entitledCans: number;
+  collectedCans: number;
+  remainingCans: number;
+};
+
+/**
+ * Headline quantities for the dashboard. Kilos and litres are summed as one "kg" figure
+ * (a litre of oil or milk weighs about a kilo and families think of it that way); cans are
+ * counted separately.
+ */
+export function quantityTotals(items: ItemMonth[]): QuantityTotals {
+  const totals: QuantityTotals = { entitledKg: 0, collectedKg: 0, remainingKg: 0, entitledCans: 0, collectedCans: 0, remainingCans: 0 };
+  for (const row of items) {
+    const isCan = row.item.unit === "can";
+    totals[isCan ? "entitledCans" : "entitledKg"] += row.entitledQty;
+    totals[isCan ? "collectedCans" : "collectedKg"] += row.collectedQty;
+    totals[isCan ? "remainingCans" : "remainingKg"] += row.remainingQty;
+  }
+  return totals;
+}

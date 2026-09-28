@@ -88,7 +88,9 @@
         "collected": "Collected",
         "stillYours": "Still yours",
         "collectedLabel": "collected",
-        "collectedShare": "Share of this month's ration collected"
+        "collectedShare": "Share of this month's ration collected",
+        "plusCans": "+ {count} cans",
+        "worth": "worth {kd} of subsidy"
       },
       "insight": {
         "empty": "Scan one receipt and we start learning what your family really uses.",

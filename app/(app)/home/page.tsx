@@ -17,7 +17,7 @@ import { useSnapshot } from "@/lib/data/provider";
 import { currentMonth } from "@/lib/format";
 import { useT } from "@/lib/i18n/provider";
 import { hasPickupIn } from "@/lib/plan/month";
-import { monthSummary } from "@/lib/ration/entitlement";
+import { monthSummary, quantityTotals } from "@/lib/ration/entitlement";
 import { nextStep as pickNextStep } from "@/lib/ration/insights";
 
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
@@ -35,7 +35,8 @@ export default function HomePage() {
     [snapshot.members, snapshot.pickups, month],
   );
   const nextStep = useMemo(() => pickNextStep(snapshot, now ?? new Date()), [snapshot, now]);
-  const collectedShare = summary.entitledKD ? summary.collectedKD / summary.entitledKD : 0;
+  const qty = quantityTotals(summary.items);
+  const collectedShare = qty.entitledKg ? qty.collectedKg / qty.entitledKg : 0;
 
   useEffect(() => {
     setNow(new Date());
