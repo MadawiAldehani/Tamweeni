@@ -1,4 +1,4 @@
-// The Al-Sabah demo family: two past months of full-quota pickups with pantry
+// The Abdullah demo family: two past months of full-quota pickups with pantry
 // check-ins, one collected donation, and a clean current month. Deterministic:
 // the same `now` and ids always produce byte-identical output.
 import { RATION_ITEMS, type RationItemId } from "@/lib/ration/catalog";
@@ -16,12 +16,12 @@ import type {
 /** Names in the family's own script so the RTL screens never mix Latin into Arabic; the last member is the infant. */
 const DEMO_NAMES: Record<Locale, { household: string; coop: string; members: readonly string[] }> = {
   en: {
-    household: "Al-Sabah family",
+    household: "Abdullah family",
     coop: "Salmiya Co-op",
     members: ["Fahad", "Noura", "Abdullah", "Sara", "Yousef", "Dana", "Lulwa"],
   },
   ar: {
-    household: "عائلة الصباح",
+    household: "عائلة عبدالله",
     coop: "جمعية السالمية",
     members: ["فهد", "نورة", "عبدالله", "سارة", "يوسف", "دانة", "لولوة"],
   },

@@ -30,7 +30,7 @@ are the other two gates.
 ## The 3-minute demo
 
 1. **Onboarding** — swipe the three-beat story, switch to **العربية** to show RTL, continue
-   as the demo family (Al-Sabah, 7 members, one infant, two months of history).
+   as the demo family (Abdullah family, 7 members, one infant, two months of history).
 2. **Home** — entitlement in KD, the month ring, the pantry shelf, the insight sentence
    ("Last month you collected 35 kg of rice and used about 15 kg…"), the sadaqa counter.
 3. **Scan receipt** — tap **Use the sample receipt**, watch it parse, correct a line,
@@ -109,7 +109,7 @@ lib/ration/        catalog, entitlement, consumption, insights, meals, governora
 lib/receipt/       parse types, matcher (OCR → items), ocr (Tesseract), claude (optional), mock
 lib/plan, lib/donate, lib/insights, lib/impact   screen-specific helpers (pure)
 lib/i18n/          dictionaries/en.json + ar.json, provider (client), translate (server-safe)
-lib/demo/seed.ts   the Al-Sabah demo family
+lib/demo/seed.ts   the Abdullah demo family
 supabase/          migrations (0002 = catalog upsert, 0004 = bucket limits) · seed.sql intentionally empty · types/database.ts mirrors the schema
 public/demo/       the sample receipt (regenerate with npm run sample-receipt)
 scripts/           check-i18n (parity gate), i18n-add (add keys to both files), icons, sample receipt

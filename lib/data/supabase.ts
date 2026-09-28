@@ -200,7 +200,7 @@ export class SupabaseStore implements DataStore {
     check(await this.client.from("donations").update({ status }).eq("household_id", household_id).eq("voucher_code", voucherCode));
   }
 
-  /** Replaces the user's household with the seeded Al-Sabah family, minting real uuids for every row. */
+  /** Replaces the user's household with the seeded Abdullah family, minting real uuids for every row. */
   async loadDemoFamily(locale: Locale = "en"): Promise<void> {
     const user = await this.requireUser();
     await this.resetAll();
