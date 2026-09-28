@@ -54,6 +54,8 @@ export type PantryCheckin = {
   /** "YYYY-MM-DD" */
   checkin_date: string;
   qty_remaining: number;
+  /** Expired or thrown away since the pickup, in catalog units. Optional: older records have none. */
+  qty_wasted?: number;
 };
 
 export type DonationStatus = "pledged" | "collected";
@@ -129,7 +131,7 @@ export type PickupInput = {
 
 export type CheckinInput = {
   checkin_date: string;
-  lines: { item_id: RationItemId; qty_remaining: number }[];
+  lines: { item_id: RationItemId; qty_remaining: number; qty_wasted?: number }[];
 };
 
 export type DonationInput = {

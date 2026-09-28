@@ -19,13 +19,13 @@ type PlanItemRowProps = {
   style?: CSSProperties;
 };
 
-/** One item: entitlement, what Tamweeni learned, the quantity stepper, and what is left behind. */
+/** One item: entitlement, what Tamweeni learned, the quantity stepper, and the surplus (entitled − planned). */
 export function PlanItemRow({ suggestion, value, onChange, style }: PlanItemRowProps) {
   const { t, locale } = useLanguage();
   const { item, entitledQty, usage, learning } = suggestion;
   const name = localized(item, "name", locale);
   const unit = unitFor(item.unit, entitledQty, t);
-  const leaving = Math.max(0, entitledQty - value);
+  const surplus = Math.max(0, entitledQty - value);
   // Quantities match the stepper (up to 2 dp, e.g. 9.08 kg); learned usage is a rough 1 dp figure.
   const fmt = (n: number) => formatNumber(n, locale, 2);
   const rough = (n: number) => formatNumber(n, locale, 1);
@@ -72,9 +72,9 @@ export function PlanItemRow({ suggestion, value, onChange, style }: PlanItemRowP
             decrementLabel={t("pages.plan.item.decrement", { item: name })}
             incrementLabel={t("pages.plan.item.increment", { item: name })}
           />
-          {leaving > 0 ? (
+          {surplus > 0 ? (
             <p className="tabular text-xs font-medium text-primary">
-              <bdi>{t("pages.plan.item.leaving", { qty: fmt(leaving), unit })}</bdi>
+              <bdi>{t("pages.plan.item.surplus", { qty: fmt(surplus), unit })}</bdi>
             </p>
           ) : null}
         </div>

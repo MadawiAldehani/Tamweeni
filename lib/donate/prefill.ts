@@ -1,9 +1,9 @@
-// What the family can give this month, pre-filled from their plan or from what Tamweeni learned.
-// Pure functions over the snapshot: no React, safe to import anywhere.
+// What the family can give this month: the surplus of their saved pickup plan (entitled − planned),
+// minus what they already pledged. Pure functions over the snapshot: no React, safe to import anywhere.
 import type { Donation, Member, Snapshot } from "@/lib/data/types";
 import { planMonthFor, savedPlanFor } from "@/lib/plan/month";
 import { RATION_ITEMS, type RationItem, type RationItemId } from "@/lib/ration/catalog";
-import { stepFor, suggestPickup } from "@/lib/ration/consumption";
+import { stepFor } from "@/lib/ration/consumption";
 import { entitledQty, subsidyValue } from "@/lib/ration/entitlement";
 import { mealsFor } from "@/lib/ration/meals";
 
@@ -11,7 +11,8 @@ export type DonationDraftLine = { item: RationItem; qty: number; maxQty: number 
 
 export type DonationPrefill = {
   month: string;
-  source: "plan" | "suggestion" | "none";
+  /** "plan": quantities come from the saved plan for `month`; "none": no plan yet, every item starts at 0. */
+  source: "plan" | "none";
   lines: DonationDraftLine[];
 };
 
@@ -29,47 +30,51 @@ function pledgedByItem(donations: Donation[], month: string): Map<RationItemId, 
   return totals;
 }
 
-/** One draft line, or null when the household is not entitled to the item at all. */
-function draftLine(item: RationItem, members: Member[], pledged: Map<RationItemId, number>, wanted: number): DonationDraftLine | null {
+/**
+ * One draft line, or null when the household is not entitled to the item at all.
+ * `ceiling` is the most the family can give before this month's pledges: the plan surplus
+ * (entitled − planned) with a plan, the whole entitlement without one.
+ */
+function draftLine(item: RationItem, members: Member[], pledged: Map<RationItemId, number>, ceiling: number): DonationDraftLine | null {
   const entitled = Number(entitledQty(item, members).toFixed(2));
   if (entitled <= 0) return null;
   const step = stepFor(item);
-  // What is already pledged this month comes off both the ceiling and the pre-filled amount,
-  // so re-opening the picker after a pledge never re-offers the same surplus.
+  // What is already pledged this month comes off the ceiling, so re-opening the picker after a
+  // pledge never re-offers the same surplus; the stepper starts at the ceiling.
   const already = pledged.get(item.id) ?? 0;
-  const maxQty = floorToStep(Math.max(0, entitled - already), step);
-  const qty = floorToStep(Math.min(maxQty, Math.max(0, wanted - already)), step);
-  return { item, qty, maxQty };
+  const maxQty = floorToStep(Math.max(0, ceiling - already), step);
+  return { item, qty: maxQty, maxQty };
 }
 
 /**
- * Month: `planMonth` when a plan is saved for it, else the month a new plan would be for.
- * Lines: the plan's leaving, else the learned suggestion's leaving, else every entitled item at 0.
- * `maxQty` is the entitlement minus what is already pledged for that month; `qty` subtracts it too.
+ * Month: `planMonth` when given, else the month a new plan would be for.
+ * With a saved plan for that month: one line per plan item, qty = maxQty = entitled − planned − already pledged,
+ * items with nothing left to give dropped. Without a plan: every entitled item at 0 (up to the entitlement
+ * minus pledges), for a manual pick.
  */
 export function donationPrefill(snapshot: Snapshot, now: Date, planMonth?: string | null): DonationPrefill {
-  const requested = planMonth ? savedPlanFor(snapshot, planMonth) : null;
-  const month = requested ? requested.month : planMonthFor(snapshot, now).month;
-  const plan = requested ?? savedPlanFor(snapshot, month);
+  const month = planMonth ?? planMonthFor(snapshot, now).month;
+  const plan = savedPlanFor(snapshot, month);
   const { members } = snapshot;
   const pledged = pledgedByItem(snapshot.donations, month);
-  const build = (wantedFor: (item: RationItem) => number) =>
-    RATION_ITEMS.map((item) => draftLine(item, members, pledged, wantedFor(item))).filter(
-      (line): line is DonationDraftLine => line !== null,
-    );
 
   if (plan) {
-    // An item missing from the plan is not being taken, so all of it is left behind.
-    const plannedFor = (item: RationItem) => plan.lines.find((l) => l.item_id === item.id)?.planned_qty ?? 0;
-    const lines = build((item) => entitledQty(item, members) - plannedFor(item));
-    if (lines.some((l) => l.qty > 0)) return { month, source: "plan", lines: lines.filter((l) => l.qty > 0) };
+    const lines = RATION_ITEMS.flatMap((item) => {
+      const planned = plan.lines.find((l) => l.item_id === item.id);
+      if (!planned) return [];
+      const surplus = Number((entitledQty(item, members) - planned.planned_qty).toFixed(2));
+      const line = draftLine(item, members, pledged, surplus);
+      // Items planned in full (no surplus) or already pledged in full stay out of the picker.
+      return line && line.maxQty > 0 ? [line] : [];
+    });
+    return { month, source: "plan", lines };
   }
 
-  const leaving = new Map(suggestPickup(snapshot, now).map((s) => [s.item.id, s.leavingQty]));
-  const suggested = build((item) => leaving.get(item.id) ?? 0);
-  if (suggested.some((l) => l.qty > 0)) return { month, source: "suggestion", lines: suggested.filter((l) => l.qty > 0) };
-
-  return { month, source: "none", lines: build(() => 0) };
+  const lines = RATION_ITEMS.flatMap((item) => {
+    const line = draftLine(item, members, pledged, entitledQty(item, members));
+    return line ? [{ ...line, qty: 0 }] : [];
+  });
+  return { month, source: "none", lines };
 }
 
 export type DraftTotals = {

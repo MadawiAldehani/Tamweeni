@@ -98,7 +98,7 @@ export class SupabaseStore implements DataStore {
       household,
       members: must(members),
       pickups: must(pickups).map(({ pickup_lines, ...p }) => ({ ...p, lines: pickup_lines as PickupLine[] })),
-      checkins: must(checkins).map((c) => ({ ...c, item_id: c.item_id as RationItemId })),
+      checkins: must(checkins).map((c) => ({ ...c, item_id: c.item_id as RationItemId, qty_wasted: c.qty_wasted ?? 0 })),
       plans: must(plans).map(({ plan_lines, ...p }) => ({ ...p, lines: plan_lines as PlanLine[] })) as PlanWithLines[],
       donations: must(donations).map((d) => ({ ...d, item_id: d.item_id as RationItemId })),
     };
@@ -173,7 +173,9 @@ export class SupabaseStore implements DataStore {
 
   async createCheckins(input: CheckinInput): Promise<void> {
     const household_id = await this.householdId();
-    const rows = input.lines.map((l) => ({ household_id, checkin_date: input.checkin_date, ...l }));
+    const rows = input.lines.map((l) => ({
+      household_id, checkin_date: input.checkin_date, item_id: l.item_id, qty_remaining: l.qty_remaining, qty_wasted: l.qty_wasted ?? 0,
+    }));
     check(await this.client.from("pantry_checkins").insert(rows));
   }
 
@@ -215,7 +217,7 @@ export class SupabaseStore implements DataStore {
     check(await c.from("pickups").insert(demo.pickups.map((p) => ({ ...strip(p, "lines"), id: pickupIds.get(p.id)! }))));
     check(await c.from("pickup_lines").insert(demo.pickups.flatMap((p) =>
       p.lines.map((l) => ({ ...strip(l, "id"), pickup_id: pickupIds.get(p.id)! })))));
-    check(await c.from("pantry_checkins").insert(demo.checkins.map((ci) => strip(ci, "id"))));
+    check(await c.from("pantry_checkins").insert(demo.checkins.map((ci) => ({ ...strip(ci, "id"), qty_wasted: ci.qty_wasted ?? 0 }))));
     check(await c.from("donations").insert(demo.donations.map((d) => strip(d, "id"))));
     if (demo.plans.length) {
       check(await c.from("plans").insert(demo.plans.map((p) => ({ ...strip(p, "lines"), id: planIds.get(p.id)! }))));

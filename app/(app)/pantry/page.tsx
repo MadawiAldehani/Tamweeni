@@ -4,7 +4,10 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import { PantryEmpty, PantryIntro } from "@/components/pantry/pantry-intro";
 import { PantryItemSlider } from "@/components/pantry/pantry-item-slider";
-import { buildPantryRows, daysSince, pickupsFor, usedByItem, usedVolume, type PantryValues, type UsedItem } from "@/components/pantry/pantry-math";
+import {
+  buildPantryRows, clampWaste, daysSince, pickupsFor, usedByItem, usedVolume, wastedVolume,
+  type PantryRow, type PantryValues, type PantryWaste, type UsedItem,
+} from "@/components/pantry/pantry-math";
 import { PantrySuccess } from "@/components/pantry/pantry-success";
 import { PantrySummaryBar } from "@/components/pantry/pantry-summary-bar";
 import { AppHeader } from "@/components/shell/app-header";
@@ -16,7 +19,7 @@ import type { RationItemId } from "@/lib/ration/catalog";
 
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
-/** Weekly pantry check-in: one slider per item collected this month, saved as check-ins. */
+/** Weekly pantry check-in: one slider per item collected this month (plus optional waste), saved as check-ins. */
 export default function PantryPage() {
   const t = useT();
   const { snapshot, loading, mutate } = useData();
@@ -24,9 +27,11 @@ export default function PantryPage() {
   const [now, setNow] = useState<Date | null>(null);
   // Only the sliders the family has touched; everything else reads its row's initial value.
   const [values, setValues] = useState<PantryValues>({});
+  // Optional per-item "expired or thrown away" quantities; untouched rows read the latest check-in's waste.
+  const [waste, setWaste] = useState<PantryWaste>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
-  const [savedUsed, setSavedUsed] = useState<UsedItem[] | null>(null);
+  const [saved, setSaved] = useState<{ used: UsedItem[]; wastedKg: number } | null>(null);
 
   useEffect(() => {
     setNow(new Date());
@@ -39,17 +44,27 @@ export default function PantryPage() {
   const daysAgo = now && lastPickup ? daysSince(lastPickup.pickup_date, now) : null;
 
   const valueFor = (id: RationItemId, initial: number) => values[id] ?? initial;
-  const setValue = (id: RationItemId, next: number) => setValues((all) => ({ ...all, [id]: next }));
+  const wasteFor = (row: PantryRow) => clampWaste(row, valueFor(row.item.id, row.initial), waste[row.item.id] ?? row.initialWasted);
+  /** Moving the slider also pulls the waste down so remaining + wasted never exceeds collected. */
+  const setValue = (row: PantryRow, next: number) => {
+    setValues((all) => ({ ...all, [row.item.id]: next }));
+    setWaste((all) => ({ ...all, [row.item.id]: clampWaste(row, next, all[row.item.id] ?? row.initialWasted) }));
+  };
+  const setWasted = (row: PantryRow, next: number) =>
+    setWaste((all) => ({ ...all, [row.item.id]: clampWaste(row, valueFor(row.item.id, row.initial), next) }));
 
   const save = async () => {
     if (saving || rows.length === 0) return;
     setSaving(true);
     setError(false);
-    const lines = rows.map((row) => ({ item_id: row.item.id, qty_remaining: valueFor(row.item.id, row.initial) }));
-    const used = usedByItem(rows, values);
+    const lines = rows.map((row) => ({
+      item_id: row.item.id, qty_remaining: valueFor(row.item.id, row.initial), qty_wasted: wasteFor(row),
+    }));
+    const used = usedByItem(rows, values, waste);
+    const wastedKg = wastedVolume(rows, values, waste);
     try {
       await mutate((s) => s.createCheckins({ checkin_date: todayISO(now ?? new Date()), lines }));
-      setSavedUsed(used);
+      setSaved({ used, wastedKg });
     } catch {
       setError(true);
       setSaving(false);
@@ -59,9 +74,9 @@ export default function PantryPage() {
   return (
     <>
       <AppHeader title={t("pages.pantry.title")} subtitle={t("pages.pantry.subtitle")} backHref="/home" />
-      {savedUsed ? (
+      {saved ? (
         <PageContainer>
-          <PantrySuccess used={savedUsed} now={now ?? new Date()} />
+          <PantrySuccess used={saved.used} wastedKg={saved.wastedKg} now={now ?? new Date()} />
         </PageContainer>
       ) : rows.length === 0 ? (
         <PageContainer className="stagger flex flex-col gap-3">
@@ -77,7 +92,9 @@ export default function PantryPage() {
               style={at(Math.min(i + 1, 7))}
               row={row}
               value={valueFor(row.item.id, row.initial)}
-              onChange={(next) => setValue(row.item.id, next)}
+              onChange={(next) => setValue(row, next)}
+              wasted={wasteFor(row)}
+              onWastedChange={(next) => setWasted(row, next)}
             />
           ))}
           {/* Direct child of the flex column: a sticky element can only stick within its parent. */}
@@ -85,7 +102,8 @@ export default function PantryPage() {
             style={at(8)}
             className="mt-1"
             count={rows.length}
-            usedKg={usedVolume(rows, values)}
+            usedKg={usedVolume(rows, values, waste)}
+            wastedKg={wastedVolume(rows, values, waste)}
             saving={saving}
             error={error}
             onSave={save}

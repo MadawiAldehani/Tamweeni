@@ -5,7 +5,9 @@ import type { SeriesKey } from "@/components/insights/chart-theme";
 import { useT } from "@/lib/i18n/provider";
 
 export type SeriesColumn<Row> = {
-  key: SeriesKey;
+  key: string;
+  /** The bar this column mirrors, if any; picks the swatch and the legend entry. */
+  series?: SeriesKey;
   label: string;
   /** Formatted value, or null when the row has no data for this series. */
   cell: (row: Row) => string | null;
@@ -30,7 +32,7 @@ export function SeriesTable<Row extends { month: string; label: string }>({ rows
           {columns.map((c) => (
             <th key={c.key} scope="col" className="py-2 ps-2 text-end font-medium">
               <span className="inline-flex items-center gap-1.5">
-                <Swatch series={c.key} />
+                {c.series ? <Swatch series={c.series} /> : null}
                 {c.label}
                 {unit ? <span className="text-muted-foreground/70">({unit})</span> : null}
               </span>

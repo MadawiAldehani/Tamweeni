@@ -11,6 +11,8 @@ export type PantryRow = {
   step: number;
   /** Latest check-in this month if any, else everything collected (nothing used yet). */
   initial: number;
+  /** Waste recorded on that latest check-in, else 0 (older check-ins carry no waste). */
+  initialWasted: number;
 };
 
 /** Kilos slide in 100 g below 5 kg and half-kilos above; litres and cans by the unit. */
@@ -46,7 +48,8 @@ export function buildPantryRows(snapshot: Snapshot, month: string): PantryRow[] 
       const collected = Number(row.collectedQty.toFixed(2));
       const checkin = checkins.get(row.item.id);
       const initial = checkin ? Math.min(collected, Math.max(0, checkin.qty_remaining)) : collected;
-      return { item: row.item, collected, step: sliderStep(row.item.unit, collected), initial };
+      const initialWasted = checkin ? Math.min(Math.max(0, checkin.qty_wasted ?? 0), Math.max(0, collected - initial)) : 0;
+      return { item: row.item, collected, step: sliderStep(row.item.unit, collected), initial, initialWasted };
     });
 }
 
@@ -60,19 +63,47 @@ export function daysSince(iso: string, now: Date): number {
 /** Slider positions the family has touched; untouched rows fall back to `initial`. */
 export type PantryValues = Partial<Record<RationItemId, number>>;
 
+/** Expired / thrown-away quantities the family entered; untouched rows fall back to `initialWasted`. */
+export type PantryWaste = Partial<Record<RationItemId, number>>;
+
+/** Waste steps in half-kilos for kilos and whole units for litres and cans. */
+export function wasteStep(unit: RationUnit): number {
+  return unit === "kg" ? 0.5 : 1;
+}
+
+/** Waste can never exceed what is not still in the pantry: remaining + wasted ≤ collected. */
+export function clampWaste(row: PantryRow, remaining: number, wasted: number): number {
+  return Number(Math.min(Math.max(0, wasted), Math.max(0, row.collected - remaining)).toFixed(2));
+}
+
+function remainingOf(row: PantryRow, values: PantryValues): number {
+  return values[row.item.id] ?? row.initial;
+}
+
+function wastedOf(row: PantryRow, values: PantryValues, waste: PantryWaste): number {
+  return clampWaste(row, remainingOf(row, values), waste[row.item.id] ?? row.initialWasted);
+}
+
+/** used = collected − remaining − wasted, never below 0. */
+export function usedOf(row: PantryRow, values: PantryValues, waste: PantryWaste): number {
+  return Math.max(0, row.collected - remainingOf(row, values) - wastedOf(row, values, waste));
+}
+
 /** Rough "kg used" figure: kilos plus litres, cans left out. */
-export function usedVolume(rows: PantryRow[], values: PantryValues): number {
-  return rows.reduce((sum, row) => {
-    if (row.item.unit === "can") return sum;
-    return sum + Math.max(0, row.collected - (values[row.item.id] ?? row.initial));
-  }, 0);
+export function usedVolume(rows: PantryRow[], values: PantryValues, waste: PantryWaste): number {
+  return rows.reduce((sum, row) => (row.item.unit === "can" ? sum : sum + usedOf(row, values, waste)), 0);
+}
+
+/** Same rough figure for what expired or was thrown away. */
+export function wastedVolume(rows: PantryRow[], values: PantryValues, waste: PantryWaste): number {
+  return rows.reduce((sum, row) => (row.item.unit === "can" ? sum : sum + wastedOf(row, values, waste)), 0);
 }
 
 export type UsedItem = { id: RationItemId; used: number };
 
 /** Quantity used per item in this check-in, most used first (untouched rows read 0). */
-export function usedByItem(rows: PantryRow[], values: PantryValues): UsedItem[] {
+export function usedByItem(rows: PantryRow[], values: PantryValues, waste: PantryWaste): UsedItem[] {
   return rows
-    .map((row) => ({ id: row.item.id, used: Math.max(0, row.collected - (values[row.item.id] ?? row.initial)) }))
+    .map((row) => ({ id: row.item.id, used: usedOf(row, values, waste) }))
     .sort((a, b) => b.used - a.used);
 }

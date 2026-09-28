@@ -19,13 +19,15 @@ import { estimateItemUsage, monthlyUsageFor } from "@/lib/ration/consumption";
 type PantrySuccessProps = {
   /** Quantity used per item in this check-in, most first. */
   used: UsedItem[];
+  /** Rough kilos expired or thrown away in this check-in; shown quietly when above zero. */
+  wastedKg: number;
   now: Date;
 };
 
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
 /** After the save: a green check, what Tamweeni learned per item, and the two ways onward. */
-export function PantrySuccess({ used, now }: PantrySuccessProps) {
+export function PantrySuccess({ used, wastedKg, now }: PantrySuccessProps) {
   const { t, locale } = useLanguage();
   // Read the snapshot here: mutate() has already reloaded it with the new check-ins.
   const snapshot = useSnapshot();
@@ -54,6 +56,11 @@ export function PantrySuccess({ used, now }: PantrySuccessProps) {
           <div className="flex flex-col gap-1">
             <h2 className="text-2xl font-semibold">{t("pages.pantry.success.title")}</h2>
             <p className="text-sm text-muted-foreground">{t("pages.pantry.success.subtitle")}</p>
+            {wastedKg > 0 ? (
+              <p className="tabular text-xs text-muted-foreground">
+                <bdi>{t("pages.pantry.success.wasted", { kg: formatNumber(wastedKg, locale, 1) })}</bdi>
+              </p>
+            ) : null}
           </div>
         </CardContent>
       </Card>

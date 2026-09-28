@@ -1,4 +1,4 @@
-// Hand-written supabase-js Database type. Mirrors supabase/migrations/0001_init.sql
+// Hand-written supabase-js Database type. Mirrors supabase/migrations/0001_init.sql (+ 0005)
 // column-for-column; update both together. Rows are plain strings/numbers because
 // PostgREST serialises uuid/date/timestamptz/numeric as JSON strings and numbers.
 
@@ -62,6 +62,8 @@ export type PantryCheckinRow = {
   item_id: string;
   checkin_date: string;
   qty_remaining: number;
+  /** 0005: expired or thrown away since the pickup; defaults to 0 in Postgres. */
+  qty_wasted: number;
 };
 
 export type DonationRow = {
@@ -90,7 +92,7 @@ export type Database = {
         { foreignKeyName: "pickup_lines_pickup_id_fkey"; columns: ["pickup_id"]; isOneToOne: false; referencedRelation: "pickups"; referencedColumns: ["id"] },
         ItemFk<"pickup_lines_item_id_fkey">,
       ]>;
-      pantry_checkins: Table<PantryCheckinRow, "id", [...HouseholdFk<"pantry_checkins_household_id_fkey">, ItemFk<"pantry_checkins_item_id_fkey">]>;
+      pantry_checkins: Table<PantryCheckinRow, "id" | "qty_wasted", [...HouseholdFk<"pantry_checkins_household_id_fkey">, ItemFk<"pantry_checkins_item_id_fkey">]>;
       donations: Table<DonationRow, "id" | "status" | "created_at", [...HouseholdFk<"donations_household_id_fkey">, ItemFk<"donations_item_id_fkey">]>;
       plans: Table<PlanRow, "id" | "created_at", HouseholdFk<"plans_household_id_fkey">>;
       plan_lines: Table<PlanLineRow, never, [

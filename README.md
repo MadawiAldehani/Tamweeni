@@ -37,9 +37,11 @@ are the other two gates.
    save. Home flips to 100 % collected and the "Next" tile becomes the pantry check-in.
 4. **Pantry check-in** — slide a couple of items ("half", "all used"), save, see
    "what we learned".
-5. **Plan pickup** — suggested quantities per item, the "you're leaving 25 kg · KD 12"
-   bar, save → the branch checklist with pack counts, **Share**.
-6. **Donate** — surplus prefilled, pledge → voucher with QR code, **Request pickup on
+5. **Plan pickup** — suggested quantities per item, the "You need 15 kg · Surplus 20 kg" bar
+   (kilos only — the surplus becomes the donation), save → the branch checklist with pack
+   counts, **Share**.
+6. **Donate** — the surplus of the saved plan is prefilled ("From your plan for …"; no plan →
+   "Make your pickup plan first"), pledge → voucher with QR code, **Request pickup on
    WhatsApp**, history with "mark as collected".
 7. **Insights** — entitled vs collected vs used per item, money view, waste-risk list.
 8. **/impact** — the national page for judges (labelled "pilot projection" until live

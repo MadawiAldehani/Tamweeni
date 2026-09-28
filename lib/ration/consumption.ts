@@ -1,5 +1,7 @@
 // The "take what you need" model. Deliberately simple and explainable:
-//   usage_month  = collected_that_month − qty_remaining_at_check-in   (clamp ≥ 0)
+//   usage_month  = collected_that_month − qty_remaining_at_check-in − qty_wasted_at_check-in   (clamp ≥ 0)
+//                  (waste is what expired or was thrown away; it is not "used", so it never
+//                  inflates the suggestion for next month)
 //   suggested    = clamp(avg_usage × 1.1 − current_pantry_estimate, 0, entitlement)
 // Plus two refinements over the brief:
 //   • a check-in taken d days after the pickup is pro-rated to a full month
@@ -29,7 +31,17 @@ function daysInMonth(month: string): number {
   return new Date(y, m, 0).getDate();
 }
 
-export type MonthUsage = { month: string; collected: number; remaining: number; used: number; monthlyUsage: number; checkinDate: string };
+export type MonthUsage = {
+  month: string;
+  collected: number;
+  remaining: number;
+  /** Expired or thrown away per the check-in (0 for older records). */
+  wasted: number;
+  /** collected − remaining − wasted, clamp ≥ 0. */
+  used: number;
+  monthlyUsage: number;
+  checkinDate: string;
+};
 
 /** Usage of one item in one month, pro-rated to a full month; null without a check-in (attribution rule: insights.ts). */
 export function monthlyUsageFor(snapshot: Snapshot, itemId: RationItemId, month: string): MonthUsage | null {
@@ -41,12 +53,13 @@ export function monthlyUsageFor(snapshot: Snapshot, itemId: RationItemId, month:
 
   const collected = collectedByItem(snapshot.pickups, month).get(itemId) ?? 0;
   const remaining = Math.min(collected, Math.max(0, checkin.qty_remaining));
-  const used = Math.max(0, collected - remaining);
+  const wasted = Math.min(collected, Math.max(0, checkin.qty_wasted ?? 0));
+  const used = Math.max(0, collected - remaining - wasted);
   const days = Math.max(MIN_DAYS, daysBetween(pickupDate, checkin.checkin_date));
   // Pro-rate to a full month (factor 1 when the check-in came a whole month after the pickup).
   // A family cannot be shown using more than it collected.
   const monthlyUsage = Math.min(collected, used * (daysInMonth(month) / Math.min(days, daysInMonth(month))));
-  return { month, collected, remaining, used, monthlyUsage, checkinDate: checkin.checkin_date };
+  return { month, collected, remaining, wasted, used, monthlyUsage, checkinDate: checkin.checkin_date };
 }
 
 export type UsageEstimate = {
@@ -96,8 +109,8 @@ export type Suggestion = {
   item: RationItem;
   entitledQty: number;
   suggestedQty: number;
-  /** entitled − suggested: what the family could leave (or donate). */
-  leavingQty: number;
+  /** entitled − suggested: the surplus, which becomes the donation on the Donate page. */
+  surplusQty: number;
   usage: UsageEstimate;
   /** True while there is no check-in history for this item. */
   learning: boolean;
@@ -113,6 +126,6 @@ export function suggestPickup(snapshot: Snapshot, now: Date = new Date()): Sugge
     const learning = usage.monthlyUsage === null;
     const raw = learning ? entitled : usage.monthlyUsage! * HEADROOM - usage.pantryEstimate;
     const suggested = Math.min(entitled, raw > 0 ? ceilToStep(raw, stepFor(item)) : 0);
-    return { item, entitledQty: entitled, suggestedQty: suggested, leavingQty: Math.max(0, entitled - suggested), usage, learning };
+    return { item, entitledQty: entitled, suggestedQty: suggested, surplusQty: Math.max(0, entitled - suggested), usage, learning };
   }).filter((s): s is Suggestion => s !== null);
 }

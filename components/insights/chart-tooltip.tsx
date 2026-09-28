@@ -3,7 +3,8 @@
 import { Swatch } from "@/components/insights/chart-legend";
 import type { SeriesKey } from "@/components/insights/chart-theme";
 
-export type TooltipRow = { key: SeriesKey; label: string; value: string | null };
+/** `series` picks the swatch; rows without a bar (wasted, donated) leave it out. */
+export type TooltipRow = { key: string; series?: SeriesKey; label: string; value: string | null };
 
 type ChartTooltipProps = {
   title: string;
@@ -22,7 +23,7 @@ export function ChartTooltip({ title, rows, missingText, dir }: ChartTooltipProp
         {rows.map((row) => (
           <li key={row.key} className="flex items-center justify-between gap-3">
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <Swatch series={row.key} />
+              {row.series ? <Swatch series={row.series} /> : null}
               {row.label}
             </span>
             {row.value === null ? (

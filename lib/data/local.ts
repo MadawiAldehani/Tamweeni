@@ -120,7 +120,7 @@ export class LocalStore implements DataStore {
   async createCheckins(input: CheckinInput): Promise<void> {
     const household_id = this.householdId();
     for (const line of input.lines) {
-      this.db.checkins.push({ id: newId(), household_id, checkin_date: input.checkin_date, ...line });
+      this.db.checkins.push({ id: newId(), household_id, checkin_date: input.checkin_date, ...line, qty_wasted: line.qty_wasted ?? 0 });
     }
     this.commit();
   }

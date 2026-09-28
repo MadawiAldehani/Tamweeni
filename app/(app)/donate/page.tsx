@@ -53,6 +53,7 @@ function DonateScreen() {
     setNow(new Date());
   }, []);
 
+  // Quantities come from the saved plan for the month (entitled − planned − already pledged); no plan → manual pick.
   const prefill = useMemo(() => donationPrefill(snapshot, now ?? new Date(), planParam), [snapshot, now, planParam]);
   // Remount the picker whenever what can be given changes: first load, a pledge, a new plan.
   const pickerKey = `${prefill.month}:${prefill.source}:${prefill.lines.map((l) => `${l.item.id}=${l.qty}/${l.maxQty}`).join(",")}`;
@@ -85,7 +86,7 @@ function DonateScreen() {
       />
       <PageContainer>
         {/* While the first snapshot loads, show nothing rather than flashing the empty state. */}
-        {loading ? null : snapshot.members.length === 0 || prefill.lines.length === 0 ? (
+        {loading ? null : snapshot.members.length === 0 ? (
           <Card className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both">
             <CardContent>
               <EmptyState

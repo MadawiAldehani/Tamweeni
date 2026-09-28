@@ -1,6 +1,7 @@
 // The Abdullah demo family: two past months of full-quota pickups with pantry
-// check-ins, one collected donation, and a clean current month. Deterministic:
-// the same `now` and ids always produce byte-identical output.
+// check-ins (including a little expired milk, sugar and tomato paste so Insights
+// has waste to show), one collected donation, and a clean current month.
+// Deterministic: the same `now` and ids always produce byte-identical output.
 import { RATION_ITEMS, type RationItemId } from "@/lib/ration/catalog";
 import { entitledQty } from "@/lib/ration/entitlement";
 import { addMonths, currentMonth } from "@/lib/format";
@@ -55,6 +56,21 @@ const REMAINING_TWO_MONTHS_AGO: Record<RationItemId, number> = {
   chicken: 7,
 };
 
+/**
+ * What expired or was thrown away by the 27th (items not listed wasted nothing).
+ * Kept small and plausible: remaining + wasted never exceeds what was collected
+ * (7 members: 42 L milk, 7 kg sugar, 28 cans tomato paste).
+ */
+const WASTED_LAST_MONTH: Partial<Record<RationItemId, number>> = {
+  milk_longlife: 3,
+  sugar: 0.5,
+  tomato_paste: 2,
+};
+
+const WASTED_TWO_MONTHS_AGO: Partial<Record<RationItemId, number>> = {
+  milk_longlife: 2,
+};
+
 function isoDay(month: string, day: number): string {
   return `${month}-${String(day).padStart(2, "0")}`;
 }
@@ -103,6 +119,7 @@ function buildCheckins(
   month: string,
   slot: string,
   remaining: Record<RationItemId, number>,
+  wasted: Partial<Record<RationItemId, number>>,
 ): PantryCheckin[] {
   return RATION_ITEMS.map((item) => ({
     id: `demo-checkin-${slot}-${item.id}`,
@@ -110,6 +127,7 @@ function buildCheckins(
     item_id: item.id,
     checkin_date: isoDay(month, 27),
     qty_remaining: remaining[item.id],
+    qty_wasted: wasted[item.id] ?? 0,
   }));
 }
 
@@ -148,8 +166,8 @@ export function buildDemoSnapshot(
     members,
     pickups: [buildPickup(householdId, members, m2, "m2"), buildPickup(householdId, members, m1, "m1")],
     checkins: [
-      ...buildCheckins(householdId, m2, "m2", REMAINING_TWO_MONTHS_AGO),
-      ...buildCheckins(householdId, m1, "m1", REMAINING_LAST_MONTH),
+      ...buildCheckins(householdId, m2, "m2", REMAINING_TWO_MONTHS_AGO, WASTED_TWO_MONTHS_AGO),
+      ...buildCheckins(householdId, m1, "m1", REMAINING_LAST_MONTH, WASTED_LAST_MONTH),
     ],
     plans: [],
     donations: [donation],

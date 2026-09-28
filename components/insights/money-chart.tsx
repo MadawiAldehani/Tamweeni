@@ -33,8 +33,8 @@ export function MoneyChart({ points, ready }: MoneyChartProps) {
   const totals = useMemo(() => moneySummary(points), [points]);
 
   const columns: SeriesColumn<Row>[] = [
-    { key: "collected", label: t("pages.insights.money.received"), cell: (r) => kd(r.collected) },
-    { key: "used", label: t("pages.insights.series.used"), cell: (r) => (r.used === null ? null : kd(r.used)) },
+    { key: "collected", series: "collected", label: t("pages.insights.money.received"), cell: (r) => kd(r.collected) },
+    { key: "used", series: "used", label: t("pages.insights.series.used"), cell: (r) => (r.used === null ? null : kd(r.used)) },
   ];
 
   const summary =
@@ -63,7 +63,7 @@ export function MoneyChart({ points, ready }: MoneyChartProps) {
       description={t("pages.insights.money.description")}
       ariaLabel={t("pages.insights.money.aria")}
       summary={summary}
-      legend={<ChartLegend entries={columns.map((c) => ({ key: c.key, label: c.label }))} />}
+      legend={<ChartLegend entries={columns.map((c) => ({ key: c.series!, label: c.label }))} />}
       table={<SeriesTable rows={rows} columns={columns} />}
       chart={
         <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
@@ -81,7 +81,7 @@ export function MoneyChart({ points, ready }: MoneyChartProps) {
                     dir={dir}
                     title={monthLabel(row.month, locale, "long")}
                     missingText={t("pages.insights.noCheckin")}
-                    rows={columns.map((c) => ({ key: c.key, label: c.label, value: c.cell(row) }))}
+                    rows={columns.map((c) => ({ key: c.key, series: c.series, label: c.label, value: c.cell(row) }))}
                   />
                 );
               }}

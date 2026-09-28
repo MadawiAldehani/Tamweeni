@@ -1,12 +1,11 @@
 "use client";
 
-import { HeartHandshake } from "lucide-react";
 import type { CSSProperties } from "react";
 
 import { Button } from "@/components/ui/button";
-import { formatKD, formatNumber } from "@/lib/format";
+import { formatNumber } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/provider";
-import type { PlanTotals } from "@/lib/plan/totals";
+import { formatSurplus, type PlanTotals } from "@/lib/plan/totals";
 import { cn } from "@/lib/utils";
 
 type PlanSummaryBarProps = {
@@ -16,14 +15,11 @@ type PlanSummaryBarProps = {
   style?: CSSProperties;
   className?: string;
   onSave: () => void;
-  /** Saves the plan, then opens the donate page. */
-  onDonate: () => void;
 };
 
-/** Sticky bar above the pill nav: what is left behind, Donate it (when there is something), Save plan. */
-export function PlanSummaryBar({ totals, saving, error, style, className, onSave, onDonate }: PlanSummaryBarProps) {
+/** Sticky bar above the pill nav: what the family needs vs. its surplus (kilos only), and Save plan. */
+export function PlanSummaryBar({ totals, saving, error, style, className, onSave }: PlanSummaryBarProps) {
   const { t, locale } = useLanguage();
-  const canDonate = totals.leavingKD > 0;
 
   return (
     <div
@@ -33,33 +29,22 @@ export function PlanSummaryBar({ totals, saving, error, style, className, onSave
         className,
       )}
     >
-      <p className="tabular text-center text-sm">
-        <bdi>
-          {totals.takingEverything
-            ? t("pages.plan.summary.takingAll")
-            : t("pages.plan.summary.leaving", {
-                kg: formatNumber(totals.leavingKg, locale, 1),
-                kd: formatKD(totals.leavingKD, locale),
-              })}
-        </bdi>
-      </p>
-      <div className="flex gap-2">
-        {canDonate ? (
-          <Button
-            size="lg"
-            className="pressable h-12 flex-1 rounded-xl bg-warm/15 text-base text-warm-ink hover:bg-warm/25"
-            variant="secondary"
-            disabled={saving}
-            onClick={onDonate}
-          >
-            <HeartHandshake aria-hidden="true" />
-            {t("pages.plan.summary.donate")}
-          </Button>
-        ) : null}
-        <Button size="lg" className="pressable h-12 flex-1 rounded-xl text-base" disabled={saving} onClick={onSave}>
-          {saving ? t("pages.plan.summary.saving") : t("pages.plan.summary.save")}
-        </Button>
+      <div className="flex flex-col gap-0.5 text-center">
+        <p className="tabular text-sm font-medium">
+          <bdi>
+            {totals.takingEverything
+              ? t("pages.plan.summary.takingAll")
+              : t("pages.plan.summary.needSurplus", {
+                  need: formatNumber(totals.needKg, locale, 1),
+                  surplus: formatSurplus(totals, locale, t),
+                })}
+          </bdi>
+        </p>
+        <p className="text-xs text-muted-foreground">{t("pages.plan.summary.surplusHint")}</p>
       </div>
+      <Button size="lg" className="pressable h-12 rounded-xl text-base" disabled={saving} onClick={onSave}>
+        {saving ? t("pages.plan.summary.saving") : t("pages.plan.summary.save")}
+      </Button>
       {error ? <p className="text-center text-xs text-destructive">{t("pages.plan.summary.saveError")}</p> : null}
     </div>
   );

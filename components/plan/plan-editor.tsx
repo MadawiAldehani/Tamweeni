@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useMemo, useState, type CSSProperties } from "react";
 
 import { PlanItemRow } from "@/components/plan/plan-item-row";
@@ -28,7 +27,6 @@ const at = (i: number) => ({ "--i": i }) as CSSProperties;
 /** The editable plan: month chip, learning banner, one stepper per item, sticky totals. */
 export function PlanEditor({ planMonth, suggestions, saved, checkinReady, onSaved }: PlanEditorProps) {
   const { mutate } = useData();
-  const router = useRouter();
   const [planned, setPlanned] = useState<Planned>(() => initialPlanned(suggestions, saved));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
@@ -54,11 +52,6 @@ export function PlanEditor({ planMonth, suggestions, saved, checkinReady, onSave
     }
   };
 
-  // Donating from the editor saves first, so no stepper change is lost on the way.
-  const donate = async () => {
-    if (await save()) router.push(`/donate?plan=${planMonth.month}`);
-  };
-
   return (
     <div className="stagger flex flex-col gap-3">
       <PlanMonthChip planMonth={planMonth} style={at(0)} />
@@ -80,7 +73,6 @@ export function PlanEditor({ planMonth, suggestions, saved, checkinReady, onSave
         saving={saving}
         error={error}
         onSave={save}
-        onDonate={donate}
       />
     </div>
   );

@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 type PantrySummaryBarProps = {
   count: number;
   usedKg: number;
+  /** Rough kilos expired or thrown away; the bar only mentions it when above zero. */
+  wastedKg: number;
   saving: boolean;
   error: boolean;
   style?: CSSProperties;
@@ -17,9 +19,13 @@ type PantrySummaryBarProps = {
   onSave: () => void;
 };
 
-/** Sticky bar above the pill nav: item count, rough kilos used, and the Save button. */
-export function PantrySummaryBar({ count, usedKg, saving, error, style, className, onSave }: PantrySummaryBarProps) {
+/** Sticky bar above the pill nav: item count, rough kilos used (and wasted), and the Save button. */
+export function PantrySummaryBar({ count, usedKg, wastedKg, saving, error, style, className, onSave }: PantrySummaryBarProps) {
   const { t, locale } = useLanguage();
+  const kg = formatNumber(usedKg, locale, 1);
+  const summary = wastedKg > 0
+    ? t("pages.pantry.summaryWasted", { count, kg, wasted: formatNumber(wastedKg, locale, 1) })
+    : t("pages.pantry.summary", { count, kg });
 
   return (
     <div
@@ -30,7 +36,7 @@ export function PantrySummaryBar({ count, usedKg, saving, error, style, classNam
       )}
     >
       <p className="tabular text-center text-sm">
-        <bdi>{t("pages.pantry.summary", { count, kg: formatNumber(usedKg, locale, 1) })}</bdi>
+        <bdi>{summary}</bdi>
       </p>
       <Button size="lg" className="pressable h-12 rounded-xl text-base" disabled={saving} onClick={onSave}>
         {saving ? t("pages.pantry.saving") : t("pages.pantry.save")}

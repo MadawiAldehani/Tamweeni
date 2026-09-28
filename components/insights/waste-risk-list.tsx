@@ -13,7 +13,7 @@ import { localized, useLanguage } from "@/lib/i18n/provider";
 import type { WasteRow } from "@/lib/insights/series";
 import { unitFor } from "@/lib/plan/units";
 
-/** Ranked list of items by the share left unused, with a thin warm bar; the top row links to donating. */
+/** "What you don't use": items ranked by the share left unused (with what was wasted), a thin warm bar; the top row links to donating. */
 export function WasteRiskList({ rows }: { rows: WasteRow[] }) {
   const { t, locale } = useLanguage();
 
@@ -50,6 +50,10 @@ export function WasteRiskList({ rows }: { rows: WasteRow[] }) {
                   : row.monthsWithData === 2
                     ? t("pages.insights.waste.unusedTwo", { qty, unit })
                     : t("pages.insights.waste.unused", { qty, unit, count: row.monthsWithData });
+              const wasted =
+                row.wasted > 0
+                  ? t("pages.insights.waste.wasted", { qty: formatNumber(row.wasted, locale, 1), unit: unitFor(row.item.unit, row.wasted, t) })
+                  : null;
               return (
                 <li key={row.item.id} style={{ "--i": Math.min(index, 8) * 0.5 } as CSSProperties} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                   <ItemIcon itemId={row.item.id} size={40} />
@@ -72,6 +76,12 @@ export function WasteRiskList({ rows }: { rows: WasteRow[] }) {
                     </span>
                     <span className="text-xs text-muted-foreground">
                       <bdi>{detail}</bdi>
+                      {wasted ? (
+                        <>
+                          {" · "}
+                          <bdi>{wasted}</bdi>
+                        </>
+                      ) : null}
                       {index === 0 && row.unused > 0 ? (
                         <>
                           {" · "}

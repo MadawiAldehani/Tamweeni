@@ -1,7 +1,6 @@
 "use client";
 
 import { Check, HeartHandshake, Pencil, Share2, Store } from "lucide-react";
-import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { ItemIcon } from "@/components/common/item-icon";
@@ -10,14 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Household, Member, PlanWithLines } from "@/lib/data/types";
-import { formatKD, formatNumber, monthLabel } from "@/lib/format";
+import { formatNumber, monthLabel } from "@/lib/format";
 import { localized, useLanguage } from "@/lib/i18n/provider";
 import { packLabel } from "@/lib/plan/packs";
 import { buildShareText } from "@/lib/plan/share";
-import { savedPlanLeavingKD } from "@/lib/plan/totals";
+import { formatSurplus, savedPlanTotals } from "@/lib/plan/totals";
 import { unitFor } from "@/lib/plan/units";
 import { getItem } from "@/lib/ration/catalog";
-import { subsidyValue } from "@/lib/ration/entitlement";
 
 type PlanChecklistProps = {
   plan: PlanWithLines;
@@ -28,7 +26,7 @@ type PlanChecklistProps = {
 
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
-/** The saved plan as a clean list to show at the branch, with Share, Donate (when something is left) and Edit. */
+/** The saved plan as a clean list to show at the branch, with Share and Edit; the surplus waits on the Donate page. */
 export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklistProps) {
   const { t, locale } = useLanguage();
   const { status, share } = usePlanShare();
@@ -43,12 +41,10 @@ export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklis
         name: localized(item, "name", locale),
         qty: `${formatNumber(l.planned_qty, locale, 2)} ${unit}`,
         pack: packLabel(item, l.planned_qty, t),
-        kd: subsidyValue(item, l.planned_qty),
       };
     });
-  const planKD = lines.reduce((sum, l) => sum + l.kd, 0);
-  const totals = t("pages.plan.checklist.totals", { count: lines.length, kd: formatKD(planKD, locale) });
-  const canDonate = savedPlanLeavingKD(plan, members) > 0;
+  const planTotals = savedPlanTotals(plan, members);
+  const totals = t("pages.plan.checklist.totals", { count: lines.length, kg: formatNumber(planTotals.needKg, locale, 1) });
 
   const onShare = () => {
     const text = buildShareText(locale, t, {
@@ -56,7 +52,7 @@ export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklis
       coop: household?.coop_name ?? "",
       month: plan.month,
       lines,
-      planKD,
+      needKg: planTotals.needKg,
     });
     const title = `${locale === "ar" ? t("app.nameArabic") : t("app.name")} — ${t("pages.plan.checklist.title")}`;
     void share(title, text);
@@ -111,6 +107,12 @@ export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklis
               <Store className="size-3.5 shrink-0" aria-hidden="true" />
               {t("pages.plan.checklist.showAtBranch")}
             </p>
+            {planTotals.takingEverything ? null : (
+              <p className="tabular inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                <HeartHandshake className="size-3.5 shrink-0 text-warm-ink" aria-hidden="true" />
+                <bdi>{t("pages.plan.checklist.surplus", { surplus: formatSurplus(planTotals, locale, t) })}</bdi>
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -124,18 +126,6 @@ export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklis
           <p className="text-center text-xs text-destructive" role="status">
             {t("pages.plan.checklist.copyFailed")}
           </p>
-        ) : null}
-        {canDonate ? (
-          <Button
-            nativeButton={false}
-            size="lg"
-            variant="secondary"
-            className="pressable h-12 rounded-xl bg-warm/15 text-base text-warm-ink hover:bg-warm/25"
-            render={<Link href={`/donate?plan=${plan.month}`} />}
-          >
-            <HeartHandshake aria-hidden="true" />
-            {t("pages.plan.summary.donate")}
-          </Button>
         ) : null}
         <Button variant="outline" size="lg" className="pressable h-12 rounded-xl text-base" onClick={onEdit}>
           {t("pages.plan.checklist.edit")}

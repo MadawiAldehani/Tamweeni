@@ -136,17 +136,17 @@
         "entitled": "Entitled {qty} {unit}",
         "usage": "You usually use ~{qty} {unit}/month",
         "pantry": "~{qty} {unit} at home",
-        "leaving": "Leaving {qty} {unit}",
         "decrement": "Take less {item}",
-        "increment": "Take more {item}"
+        "increment": "Take more {item}",
+        "surplus": "Surplus {qty} {unit}"
       },
       "summary": {
-        "leaving": "You’re leaving {kg} kg · {kd} of your entitlement",
-        "takingAll": "You’re taking your full entitlement",
-        "donate": "Donate it",
+        "takingAll": "You need your full entitlement — no surplus this month",
         "save": "Save plan",
         "saving": "Saving…",
-        "saveError": "Could not save the plan. Try again."
+        "saveError": "Could not save the plan. Try again.",
+        "needSurplus": "You need {need} kg · Surplus {surplus}",
+        "surplusHint": "Your surplus becomes your donation on the Donate page."
       },
       "checklist": {
         "saved": "Saved plan",
@@ -155,10 +155,11 @@
         "share": "Share",
         "copied": "Copied",
         "showAtBranch": "Show this list at the ration branch",
-        "totals": "{count} items · {kd} subsidy",
-        "empty": "Nothing planned — you are leaving your full entitlement.",
+        "totals": "{count} items · {kg} kg to collect",
+        "empty": "Nothing planned — your full entitlement is surplus.",
         "madeWith": "Made with Tamweeni",
-        "copyFailed": "Could not copy — long-press the list to copy it"
+        "copyFailed": "Could not copy — long-press the list to copy it",
+        "surplus": "Surplus this month: {surplus} — waiting on the Donate page"
       },
       "pack": {
         "multi": "{packs} × {size} {unit}",
@@ -212,11 +213,16 @@
       },
       "picker": {
         "surplusFor": "Surplus for {month}",
-        "fromPlan": "From your saved plan — what you’re leaving at the branch",
+        "fromPlan": "Your entitlement minus what you planned to take — adjust it before you pledge.",
         "fromSuggestion": "Based on what your family usually uses",
         "fromNone": "Choose what you’d like to give",
         "adjustPlan": "Adjust my pickup plan first",
-        "allPledged": "You’ve already pledged your whole surplus for {month}. Thank you."
+        "allPledged": "You’ve already pledged your whole surplus for {month}. Thank you.",
+        "fromPlanFor": "From your plan for {month}",
+        "noPlanTitle": "Make your pickup plan first — your surplus appears here",
+        "noPlanAction": "Plan my pickup",
+        "orPick": "Or pick items yourself",
+        "changePlan": "Change my plan"
       },
       "item": {
         "upTo": "up to {qty} {unit}",
@@ -253,7 +259,10 @@
         "entitled": "Entitled",
         "collected": "Collected",
         "used": "Used",
-        "unused": "Unused"
+        "unused": "Unused",
+        "wasted": "Wasted",
+        "donated": "Donated",
+        "atHome": "Still at home"
       },
       "noCheckin": "No pantry check-in that month",
       "table": {
@@ -265,7 +274,7 @@
       "itemChart": {
         "title": "{item} · last 3 months",
         "description": "Quantities in {unit} per month. The grey track is your entitlement.",
-        "aria": "{item}: entitled, collected and used per month"
+        "aria": "{item}: entitled, collected, used, wasted and donated per month"
       },
       "money": {
         "title": "Subsidy received vs used",
@@ -277,7 +286,7 @@
         "received": "Received"
       },
       "waste": {
-        "title": "Waste risk",
+        "title": "What you don't use",
         "description": "Share of what you collected that went unused, highest first.",
         "unused": "≈ {qty} {unit} unused over {count} months",
         "unusedOne": "≈ {qty} {unit} unused last month",
@@ -288,9 +297,18 @@
           "description": "Check what is left in your pantry and Tamweeni learns what your family really uses.",
           "cta": "Do your first pantry check-in"
         },
-        "unusedTwo": "≈ {qty} {unit} unused over the last 2 months"
+        "unusedTwo": "≈ {qty} {unit} unused over the last 2 months",
+        "wasted": "wasted {qty} {unit}"
       },
-      "footnote": "Estimates come from your pantry check-ins; the more you do, the sharper they get."
+      "footnote": "Estimates come from your pantry check-ins; the more you do, the sharper they get.",
+      "where": {
+        "title": "Where {item} went — {month}",
+        "description": "From your latest pantry check-in.",
+        "collected": "Collected {qty} {unit}",
+        "share": "{label}: {pct}% of this month's total",
+        "empty": "Do a pantry check-in to see where it went",
+        "cta": "Pantry check-in"
+      }
     },
     "settings": {
       "title": "Settings",
@@ -455,7 +473,8 @@
         "usageRow": "~{qty} {unit}/month",
         "learning": "Still learning",
         "plan": "Plan next pickup",
-        "backHome": "Back home"
+        "backHome": "Back home",
+        "wasted": "Wasted this month: {kg} kg"
       },
       "prompt": {
         "title": "Time for your weekly pantry check-in",
@@ -464,7 +483,15 @@
         "bodyFew": "It has been {count} days since your pickup"
       },
       "daysAgoFew": "{count} days ago",
-      "twoDaysAgo": "2 days ago"
+      "twoDaysAgo": "2 days ago",
+      "waste": {
+        "add": "+ Add waste",
+        "question": "Expired or thrown away?",
+        "remove": "Nothing wasted",
+        "decrement": "Less wasted",
+        "increment": "More wasted"
+      },
+      "summaryWasted": "{count} items · ≈ {kg} kg used · {wasted} kg wasted"
     },
     "impact": {
       "title": "National impact",

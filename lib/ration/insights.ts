@@ -14,7 +14,11 @@ export type ItemUsage = {
   collected: number;
   /** From the latest check-in of the month, clamped to 0..collected; 0 when never checked in. */
   remaining: number;
+  /** Expired or thrown away, from the same check-in; 0 when never checked in or not recorded. */
+  wasted: number;
+  /** collected − remaining − wasted (clamp ≥ 0): what the family actually consumed. */
   used: number;
+  /** collected − used: what the family did not need (remaining + wasted). */
   surplus: number;
 };
 
@@ -61,7 +65,7 @@ export function latestCheckins(snapshot: Snapshot, month: string): Map<RationIte
   return latest;
 }
 
-/** Usage per item for one month: collected − what the latest check-in found remaining. */
+/** Usage per item for one month: collected − what the latest check-in found remaining − what it found wasted. */
 export function estimateUsage(snapshot: Snapshot, month: string): Map<RationItemId, ItemUsage> {
   const collected = collectedByItem(snapshot.pickups, month);
   const checkins = latestCheckins(snapshot, month);
@@ -69,9 +73,12 @@ export function estimateUsage(snapshot: Snapshot, month: string): Map<RationItem
   const ids = new Set<RationItemId>([...collected.keys(), ...checkins.keys()]);
   for (const id of ids) {
     const got = collected.get(id) ?? 0;
-    const remaining = Math.min(got, Math.max(0, checkins.get(id)?.qty_remaining ?? 0));
-    const used = Math.max(0, got - remaining);
-    usage.set(id, { collected: got, remaining, used, surplus: Math.max(0, got - used) });
+    const checkin = checkins.get(id);
+    const remaining = Math.min(got, Math.max(0, checkin?.qty_remaining ?? 0));
+    // Older records have no qty_wasted: treat as nothing wasted.
+    const wasted = Math.min(got, Math.max(0, checkin?.qty_wasted ?? 0));
+    const used = Math.max(0, got - remaining - wasted);
+    usage.set(id, { collected: got, remaining, wasted, used, surplus: Math.max(0, got - used) });
   }
   return usage;
 }

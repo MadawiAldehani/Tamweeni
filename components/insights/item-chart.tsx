@@ -16,11 +16,11 @@ import type { MonthPoint } from "@/lib/insights/series";
 import { unitFor } from "@/lib/plan/units";
 import type { RationItem } from "@/lib/ration/catalog";
 
-type Row = { month: string; label: string; entitled: number; collected: number; used: number | null };
+type Row = { month: string; label: string; entitled: number; collected: number; used: number | null; wasted: number | null; donated: number };
 
 type ItemChartProps = { points: MonthPoint[]; item: RationItem; ready: boolean };
 
-/** One item over the last months: neutral entitlement track, collected (green) and used (terracotta) bars. */
+/** One item over the last months: neutral entitlement track, collected (green) and used (terracotta) bars; wasted and donated in the tooltip and table only. */
 export function ItemChart({ points, item, ready }: ItemChartProps) {
   const { t, locale, dir } = useLanguage();
   const name = localized(item, "name", locale);
@@ -30,15 +30,23 @@ export function ItemChart({ points, item, ready }: ItemChartProps) {
   const fmt = (value: unknown) => (typeof value === "number" ? n(value) : "");
 
   const rows = useMemo<Row[]>(
-    () => points.map((p) => ({ month: p.month, label: monthLabel(p.month, locale, "short"), ...p.items[item.id] })),
+    () =>
+      points.map((p) => {
+        const { entitled, collected, used, wasted, donated } = p.items[item.id];
+        return { month: p.month, label: monthLabel(p.month, locale, "short"), entitled, collected, used, wasted, donated };
+      }),
     [points, item.id, locale],
   );
 
+  const orNull = (value: number | null) => (value === null ? null : n(value));
   const columns: SeriesColumn<Row>[] = [
-    { key: "entitled", label: t("pages.insights.series.entitled"), cell: (r) => n(r.entitled) },
-    { key: "collected", label: t("pages.insights.series.collected"), cell: (r) => n(r.collected) },
-    { key: "used", label: t("pages.insights.series.used"), cell: (r) => (r.used === null ? null : n(r.used)) },
+    { key: "entitled", series: "entitled", label: t("pages.insights.series.entitled"), cell: (r) => n(r.entitled) },
+    { key: "collected", series: "collected", label: t("pages.insights.series.collected"), cell: (r) => n(r.collected) },
+    { key: "used", series: "used", label: t("pages.insights.series.used"), cell: (r) => orNull(r.used) },
+    { key: "wasted", label: t("pages.insights.series.wasted"), cell: (r) => orNull(r.wasted) },
+    { key: "donated", label: t("pages.insights.series.donated"), cell: (r) => n(r.donated) },
   ];
+  const legend = columns.flatMap((c) => (c.series ? [{ key: c.series, label: c.label }] : []));
 
   return (
     <ChartFrame
@@ -46,7 +54,7 @@ export function ItemChart({ points, item, ready }: ItemChartProps) {
       title={t("pages.insights.itemChart.title", { item: name })}
       description={t("pages.insights.itemChart.description", { unit })}
       ariaLabel={t("pages.insights.itemChart.aria", { item: name })}
-      legend={<ChartLegend entries={columns.map((c) => ({ key: c.key, label: c.label }))} />}
+      legend={<ChartLegend entries={legend} />}
       table={<SeriesTable rows={rows} columns={columns} unit={unit} />}
       chart={
         <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
@@ -66,7 +74,7 @@ export function ItemChart({ points, item, ready }: ItemChartProps) {
                     missingText={t("pages.insights.noCheckin")}
                     rows={columns.map((c) => {
                       const value = c.cell(row);
-                      return { key: c.key, label: c.label, value: value === null ? null : `${value} ${unit}` };
+                      return { key: c.key, series: c.series, label: c.label, value: value === null ? null : `${value} ${unit}` };
                     })}
                   />
                 );

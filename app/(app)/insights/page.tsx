@@ -6,6 +6,7 @@ import { ItemChart } from "@/components/insights/item-chart";
 import { ItemChips } from "@/components/insights/item-chips";
 import { MoneyChart } from "@/components/insights/money-chart";
 import { WasteRiskList } from "@/components/insights/waste-risk-list";
+import { WhereItWentCard } from "@/components/insights/where-it-went-card";
 import { AppHeader } from "@/components/shell/app-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageContainer } from "@/components/shell/page-container";
@@ -50,15 +51,18 @@ export default function InsightsPage() {
           {ready ? <ItemChips items={items} selected={selected} onSelect={setPicked} /> : <Skeleton className="h-11 w-full rounded-full" />}
         </div>
         <div style={at(1)}>
-          <ItemChart points={points} item={getItem(selected)} ready={ready} />
+          {ready ? <WhereItWentCard points={points} item={getItem(selected)} /> : <Skeleton className="h-56 w-full rounded-2xl" />}
         </div>
         <div style={at(2)}>
-          <MoneyChart points={points} ready={ready} />
+          <ItemChart points={points} item={getItem(selected)} ready={ready} />
         </div>
         <div style={at(3)}>
+          <MoneyChart points={points} ready={ready} />
+        </div>
+        <div style={at(4)}>
           {ready ? <WasteRiskList rows={risk} /> : <Skeleton className="h-48 w-full rounded-2xl" />}
         </div>
-        <p style={at(4)} className="px-1 text-center text-xs text-muted-foreground">
+        <p style={at(5)} className="px-1 text-center text-xs text-muted-foreground">
           {t("pages.insights.footnote")}
         </p>
       </PageContainer>

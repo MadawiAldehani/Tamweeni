@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 
 import { ItemIcon } from "@/components/common/item-icon";
 import type { PantryRow } from "@/components/pantry/pantry-math";
+import { PantryWasteRow } from "@/components/pantry/pantry-waste-row";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -16,18 +17,21 @@ type PantryItemSliderProps = {
   row: PantryRow;
   value: number;
   onChange: (value: number) => void;
+  /** Expired or thrown away since the pickup (already clamped to collected − value). */
+  wasted: number;
+  onWastedChange: (wasted: number) => void;
   style?: CSSProperties;
 };
 
-/** One card per collected item: the big "left" number, a slider from 0 to collected, and three quick chips. */
-export function PantryItemSlider({ row, value, onChange, style }: PantryItemSliderProps) {
+/** One card per collected item: the big "left" number, a slider from 0 to collected, three quick chips, and an optional waste row. */
+export function PantryItemSlider({ row, value, onChange, wasted, onWastedChange, style }: PantryItemSliderProps) {
   const { t, locale } = useLanguage();
   const { item, collected, step } = row;
   const name = localized(item, "name", locale);
   const decimals = item.unit === "kg" ? 2 : 0;
   const n = (qty: number) => formatNumber(qty, locale, decimals);
   const unit = unitFor(item.unit, value, t);
-  const used = Math.max(0, collected - value);
+  const used = Math.max(0, collected - value - wasted);
   const half = Math.min(collected, roundToStep(collected / 2, step));
 
   const chips: { key: "allUsed" | "half" | "untouched"; qty: number }[] = [
@@ -83,6 +87,8 @@ export function PantryItemSlider({ row, value, onChange, style }: PantryItemSlid
             );
           })}
         </div>
+
+        <PantryWasteRow row={row} remaining={value} wasted={wasted} onChange={onWastedChange} />
       </CardContent>
     </Card>
   );
