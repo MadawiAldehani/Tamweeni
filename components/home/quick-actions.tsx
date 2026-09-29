@@ -24,27 +24,20 @@ const plan: Action = { id: "plan", href: "/plan", emoji: "📝", circleTint: "bg
 const checkin: Action = { id: "checkin", href: "/pantry", emoji: "🧺", circleTint: "bg-secondary/60", labelKey: "pages.home.actions.checkin", hintKey: "pages.home.actions.checkinHint" };
 const donate: Action = { id: "donate", href: "/donate", emoji: "🤲", circleTint: "bg-warm/15", labelKey: "pages.home.actions.donate", hintKey: "pages.home.actions.donateHint" };
 
-/**
- * Three tiles; the middle one is Plan unless a pantry check-in is due or already possible (this month has a pickup).
- * The last tile is "Leftovers": it only carries the "Next" badge after a check-in shows real leftovers.
- */
-function actionsFor(nextStep: NextStep, checkinReady: boolean): Action[] {
-  return [scan, nextStep === "checkin" || checkinReady ? checkin : plan, donate];
-}
+/** Four tiles, always visible, so every step is one tap away; at most one carries the "Next" badge. */
+const ACTIONS: Action[] = [scan, checkin, plan, donate];
 
 type QuickActionsProps = {
   nextStep: NextStep;
-  /** True once this month has a pickup: the check-in tile stays reachable even when Plan is the "Next" step. */
-  checkinReady: boolean;
 };
 
-/** Scan / Plan (or Check-in) / Leftovers tiles; at most one carries the "Next" badge. */
-export function QuickActions({ nextStep, checkinReady }: QuickActionsProps) {
+/** Scan / Check-in / Plan / Leftovers tiles; at most one carries the "Next" badge. */
+export function QuickActions({ nextStep }: QuickActionsProps) {
   const t = useT();
 
   return (
-    <div className="grid grid-cols-3 gap-3">
-      {actionsFor(nextStep, checkinReady).map((action) => {
+    <div className="grid grid-cols-2 gap-3">
+      {ACTIONS.map((action) => {
         const isNext = action.id === nextStep;
         return (
           <Link

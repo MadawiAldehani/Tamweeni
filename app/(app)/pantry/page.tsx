@@ -13,6 +13,7 @@ import { PantrySummaryBar } from "@/components/pantry/pantry-summary-bar";
 import { AppHeader } from "@/components/shell/app-header";
 import { PageContainer } from "@/components/shell/page-container";
 import { useData } from "@/lib/data/provider";
+import { leftoverMonthFor } from "@/lib/donate/prefill";
 import { currentMonth, todayISO } from "@/lib/format";
 import { useT } from "@/lib/i18n/provider";
 import type { RationItemId } from "@/lib/ration/catalog";
@@ -37,7 +38,8 @@ export default function PantryPage() {
     setNow(new Date());
   }, []);
 
-  const month = currentMonth(now ?? undefined);
+  // Check in against the latest pickup (this month if it has one, else the most recent past one).
+  const month = (now ? leftoverMonthFor(snapshot, now) : null) ?? currentMonth(now ?? undefined);
   const rows = useMemo(() => buildPantryRows(snapshot, month), [snapshot, month]);
   const pickups = useMemo(() => pickupsFor(snapshot.pickups, month), [snapshot.pickups, month]);
   const lastPickup = pickups.at(-1);

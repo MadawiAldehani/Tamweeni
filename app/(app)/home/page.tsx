@@ -17,7 +17,6 @@ import { PageContainer } from "@/components/shell/page-container";
 import { useSnapshot } from "@/lib/data/provider";
 import { currentMonth } from "@/lib/format";
 import { useT } from "@/lib/i18n/provider";
-import { hasPickupIn } from "@/lib/plan/month";
 import { monthSummary, quantityTotals } from "@/lib/ration/entitlement";
 import { nextStep as pickNextStep } from "@/lib/ration/insights";
 
@@ -73,7 +72,7 @@ export default function HomePage() {
           <PantryShelf summary={summary} memberCount={snapshot.members.length} />
         </div>
         <div style={at(4)}>
-          <QuickActions nextStep={nextStep} checkinReady={hasPickupIn(snapshot.pickups, month)} />
+          <QuickActions nextStep={nextStep} />
         </div>
         {/* Only once leftovers were actually given: giving is optional, never the goal. */}
         {snapshot.donations.length > 0 ? (
