@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { ItemChart } from "@/components/insights/item-chart";
 import { ItemChips } from "@/components/insights/item-chips";
 import { MoneyChart } from "@/components/insights/money-chart";
+import { PastMonthsCard } from "@/components/insights/past-months-card";
 import { WasteRiskList } from "@/components/insights/waste-risk-list";
 import { WhereItWentCard } from "@/components/insights/where-it-went-card";
 import { AppHeader } from "@/components/shell/app-header";
@@ -54,15 +55,18 @@ export default function InsightsPage() {
           {ready ? <WhereItWentCard points={points} item={getItem(selected)} /> : <Skeleton className="h-56 w-full rounded-2xl" />}
         </div>
         <div style={at(2)}>
-          <ItemChart points={points} item={getItem(selected)} ready={ready} />
+          {ready && now ? <PastMonthsCard snapshot={snapshot} now={now} /> : <Skeleton className="h-48 w-full rounded-2xl" />}
         </div>
         <div style={at(3)}>
-          <MoneyChart points={points} ready={ready} />
+          <ItemChart points={points} item={getItem(selected)} ready={ready} />
         </div>
         <div style={at(4)}>
+          <MoneyChart points={points} ready={ready} />
+        </div>
+        <div style={at(5)}>
           {ready ? <WasteRiskList rows={risk} /> : <Skeleton className="h-48 w-full rounded-2xl" />}
         </div>
-        <p style={at(5)} className="px-1 text-center text-xs text-muted-foreground">
+        <p style={at(6)} className="px-1 text-center text-xs text-muted-foreground">
           {t("pages.insights.footnote")}
         </p>
       </PageContainer>

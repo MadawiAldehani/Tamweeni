@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { LangToggle } from "@/components/common/lang-toggle";
 import { InsightCard } from "@/components/home/insight-card";
 import { MonthHeroCard } from "@/components/home/month-hero-card";
+import { MonthReviewCard } from "@/components/home/month-review-card";
 import { PantryPromptCard } from "@/components/home/pantry-prompt-card";
 import { PantryShelf } from "@/components/home/pantry-shelf";
 import { QuickActions } from "@/components/home/quick-actions";
@@ -63,22 +64,26 @@ export default function HomePage() {
         <div style={at(1)}>
           <InsightCard snapshot={snapshot} now={now} />
         </div>
-        <PantryPromptCard style={at(1.5)} />
+        {/* Last month's leftovers as evidence for the next plan; renders only when there is something to review. */}
         <div style={at(2)}>
+          <MonthReviewCard snapshot={snapshot} now={now} />
+        </div>
+        <PantryPromptCard style={at(2.5)} />
+        <div style={at(3)}>
           <PantryShelf summary={summary} memberCount={snapshot.members.length} />
         </div>
-        <div style={at(3)}>
+        <div style={at(4)}>
           <QuickActions nextStep={nextStep} checkinReady={hasPickupIn(snapshot.pickups, month)} />
         </div>
         {/* Only once leftovers were actually given: giving is optional, never the goal. */}
         {snapshot.donations.length > 0 ? (
-          <div style={at(4)}>
+          <div style={at(5)}>
             <SadaqaCounter donations={snapshot.donations} />
           </div>
         ) : null}
         <Link
           href="/impact"
-          style={at(5)}
+          style={at(6)}
           className="pressable inline-flex items-center gap-1.5 self-start text-sm font-medium text-primary"
         >
           {t("pages.home.impactLink")}

@@ -5,10 +5,12 @@ import type { CSSProperties } from "react";
 
 import { ItemIcon } from "@/components/common/item-icon";
 import { Stepper } from "@/components/common/stepper";
+import { PlanHistoryLine } from "@/components/plan/plan-history-line";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatNumber } from "@/lib/format";
 import { localized, useLanguage } from "@/lib/i18n/provider";
+import type { ItemMonthHistory } from "@/lib/insights/history";
 import { unitFor } from "@/lib/plan/units";
 import { stepFor, type Suggestion } from "@/lib/ration/consumption";
 
@@ -16,11 +18,13 @@ type PlanItemRowProps = {
   suggestion: Suggestion;
   value: number;
   onChange: (qty: number) => void;
+  /** Past months' leftovers and donations for this item, newest first (the evidence behind the suggestion). */
+  history?: ItemMonthHistory[];
   style?: CSSProperties;
 };
 
-/** One item: entitlement, what Tamweeni learned, the quantity stepper, and what the family is not taking (entitled − planned). */
-export function PlanItemRow({ suggestion, value, onChange, style }: PlanItemRowProps) {
+/** One item: entitlement, what Tamweeni learned, past-month evidence, the quantity stepper, and what the family is not taking (entitled − planned). */
+export function PlanItemRow({ suggestion, value, onChange, history = [], style }: PlanItemRowProps) {
   const { t, locale } = useLanguage();
   const { item, entitledQty, usage, learning } = suggestion;
   const name = localized(item, "name", locale);
@@ -60,6 +64,8 @@ export function PlanItemRow({ suggestion, value, onChange, style }: PlanItemRowP
             ) : null}
           </p>
         ) : null}
+
+        <PlanHistoryLine history={history} unit={unit} locale={locale} t={t} />
 
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
           <Stepper

@@ -115,6 +115,10 @@ Meal-equivalence factors (`lib/ration/meals.ts`) and branch pack sizes
   `clamp(avg usage × 1.1 − pantry estimate, 0, entitlement)`, rounded to branch pack
   steps; with no check-ins yet the suggestion is the full entitlement and the item shows a
   "Learning" badge. → `lib/ration/consumption.ts` (the header comment explains every knob)
+- **Past months as evidence**: each item on the Plan page shows last months' leftovers and
+  donations under its suggestion; Insights has a "Past months" card (collected · used · left over
+  · wasted · donated); Home shows a month-review card near month end. → `lib/insights/history.ts`,
+  `lib/insights/series.ts`
 - **Insight sentence / next step** rules → `lib/ration/insights.ts`
 - **Over-collection** on `/impact` = `Σ(collected − used) / Σ collected` over household-
   months with a check-in. → `lib/impact/aggregate.ts` (live) and `lib/impact/demo.ts`

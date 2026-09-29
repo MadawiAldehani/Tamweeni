@@ -114,7 +114,16 @@
         "meals": "≈ {meals} meals",
         "subsidy": "{kd} of subsidy passed on"
       },
-      "impactLink": "See Kuwait's national picture"
+      "impactLink": "See Kuwait's national picture",
+      "review": {
+        "eyebrow": "{month} in review",
+        "leftOver": "left over {kg} kg",
+        "gave": "gave {kg} kg",
+        "wasted": "wasted {kg} kg",
+        "usedAll": "You used everything you collected.",
+        "body": "Plan {month} with that in mind — take a little less where you had leftovers.",
+        "cta": "Plan {month}"
+      }
     },
     "plan": {
       "title": "Plan pickup",
@@ -170,6 +179,15 @@
         "title": "Add your family first",
         "description": "The plan is built from the people on your ration card.",
         "action": "Go to settings"
+      },
+      "history": {
+        "label": "Past months: left over",
+        "entry": "{qty} {unit} ({month})",
+        "gave": "gave {qty} {unit}",
+        "noCheckin": "No pantry check-in last month — do one to sharpen this.",
+        "noteOne": "Suggestions rest on what you had left over last month; what you gave away is shown as well.",
+        "noteTwo": "Suggestions rest on what you had left over in the last two months; what you gave away is shown as well.",
+        "noteMany": "Suggestions rest on what you had left over in the last {n} months; what you gave away is shown as well."
       }
     },
     "donate": {
@@ -301,6 +319,12 @@
         "share": "{label}: {pct}% of this month's total",
         "empty": "Do a pantry check-in to see where it went",
         "cta": "Pantry check-in"
+      },
+      "past": {
+        "title": "Past months",
+        "description": "Collected, used, left over, wasted and given, month by month — kilos and litres.",
+        "leftover": "Left over",
+        "empty": "Your past months appear here after your first pickup."
       }
     },
     "settings": {
