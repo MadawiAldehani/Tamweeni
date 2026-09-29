@@ -18,7 +18,7 @@ type DonateSummaryBarProps = {
   onPledge: () => void;
 };
 
-/** Sticky bar above the pill nav: kilos, subsidy and meals of the draft, and the warm Pledge button. */
+/** Sticky bar above the pill nav: kilos, subsidy and meals of the leftovers picked, and the warm "Give to the Food Bank" button. */
 export function DonateSummaryBar({ totals, pledging, error, style, className, onPledge }: DonateSummaryBarProps) {
   const { t, locale } = useLanguage();
   const empty = totals.count === 0;

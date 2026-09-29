@@ -119,8 +119,14 @@ export function nextStep(snapshot: Snapshot, now: Date): NextStep {
   const month = currentMonth(now);
   const pickup = latestPickup(snapshot.pickups, month);
   if (!pickup) return "scan";
-  // A check-in any time after the pickup (same day included) moves the story on to giving.
-  if (checkinsForMonth(snapshot, month).length > 0) return bestSurplus(snapshot, month, true) ? "donate" : "plan";
+  // A check-in is evidence of real leftovers only once the family has used something or the
+  // pickup is a week old; a same-day "untouched" check-in must not nudge them to give food away.
+  if (checkinsForMonth(snapshot, month).length > 0) {
+    const best = bestSurplus(snapshot, month, true);
+    const consumed = best !== null && best.usage.used > 0;
+    const settled = daysBetween(pickup.pickup_date, todayISO(now)) >= CHECKIN_AFTER_DAYS;
+    return best && (consumed || settled) ? "donate" : "plan";
+  }
   if (daysBetween(pickup.pickup_date, todayISO(now)) < CHECKIN_AFTER_DAYS) return "plan";
   return "checkin";
 }

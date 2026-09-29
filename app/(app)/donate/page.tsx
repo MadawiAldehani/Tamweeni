@@ -43,7 +43,6 @@ function DonateScreen() {
   // The view follows the URL, so the bottom-nav Donate tab (a soft navigation to /donate) returns to the picker.
   const searchParams = useSearchParams();
   const voucherCode = searchParams.get("voucher");
-  const planParam = searchParams.get("plan");
   // `now` fills in after mount so server and client render the same markup.
   const [now, setNow] = useState<Date | null>(null);
   // The code the family pledged in this visit: only that voucher gets the "thank you" header.
@@ -53,9 +52,10 @@ function DonateScreen() {
     setNow(new Date());
   }, []);
 
-  // Quantities come from the saved plan for the month (entitled − planned − already pledged); no plan → manual pick.
-  const prefill = useMemo(() => donationPrefill(snapshot, now ?? new Date(), planParam), [snapshot, now, planParam]);
-  // Remount the picker whenever what can be given changes: first load, a pledge, a new plan.
+  // Optional leftovers only: what the family already collected (latest pickup month) minus what it already pledged.
+  // Never derived from the pickup plan.
+  const prefill = useMemo(() => donationPrefill(snapshot, now ?? new Date()), [snapshot, now]);
+  // Remount the picker whenever what can be given changes: first load, a pledge, a new pickup.
   const pickerKey = `${prefill.month}:${prefill.source}:${prefill.lines.map((l) => `${l.item.id}=${l.qty}/${l.maxQty}`).join(",")}`;
 
   const openVoucher = (code: string) => {

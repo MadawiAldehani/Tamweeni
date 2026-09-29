@@ -109,7 +109,7 @@ export type Suggestion = {
   item: RationItem;
   entitledQty: number;
   suggestedQty: number;
-  /** entitled − suggested: the surplus, which becomes the donation on the Donate page. */
+  /** entitled − suggested: what the family leaves in the system this month (subsidy saved for Kuwait). Never used by the Donate page. */
   surplusQty: number;
   usage: UsageEstimate;
   /** True while there is no check-in history for this item. */

@@ -19,7 +19,7 @@ type PlanItemRowProps = {
   style?: CSSProperties;
 };
 
-/** One item: entitlement, what Tamweeni learned, the quantity stepper, and the surplus (entitled − planned). */
+/** One item: entitlement, what Tamweeni learned, the quantity stepper, and what the family is not taking (entitled − planned). */
 export function PlanItemRow({ suggestion, value, onChange, style }: PlanItemRowProps) {
   const { t, locale } = useLanguage();
   const { item, entitledQty, usage, learning } = suggestion;

@@ -70,9 +70,12 @@ export default function HomePage() {
         <div style={at(3)}>
           <QuickActions nextStep={nextStep} checkinReady={hasPickupIn(snapshot.pickups, month)} />
         </div>
-        <div style={at(4)}>
-          <SadaqaCounter donations={snapshot.donations} />
-        </div>
+        {/* Only once leftovers were actually given: giving is optional, never the goal. */}
+        {snapshot.donations.length > 0 ? (
+          <div style={at(4)}>
+            <SadaqaCounter donations={snapshot.donations} />
+          </div>
+        ) : null}
         <Link
           href="/impact"
           style={at(5)}

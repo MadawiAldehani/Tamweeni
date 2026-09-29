@@ -1,5 +1,5 @@
-// Pure math over the editor state: what the family needs and what is surplus. No money here:
-// the plan page talks in kilos only; the subsidy value belongs to the Donate page.
+// Pure math over the editor state: what the family needs and what it is not taking (the surplus it
+// leaves in the system). No money here: the plan page talks in kilos only.
 import type { Member, PlanWithLines } from "@/lib/data/types";
 import { formatNumber } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";

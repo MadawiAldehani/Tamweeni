@@ -1,7 +1,7 @@
 "use client";
 
 import { BigStat } from "@/components/impact/big-stat";
-import { buildStats } from "@/components/impact/impact-data";
+import { buildStats, donatedLine } from "@/components/impact/impact-data";
 import { SourceBadge } from "@/components/impact/source-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/lib/i18n/provider";
@@ -9,9 +9,13 @@ import type { ImpactStats } from "@/lib/impact/types";
 
 const ROWS = 4;
 
-/** The four national numbers as a ledger: one row each, the data source and its caveat underneath. */
+/**
+ * The four national numbers as a ledger (households · kg not taken · KD saved · over-collection),
+ * a smaller single line for leftovers given to the Food Bank, then the data source and its caveat.
+ */
 export function ImpactLedger({ stats }: { stats: ImpactStats | null }) {
   const { t, locale } = useLanguage();
+  const donated = stats ? donatedLine(stats, locale, t) : null;
 
   return (
     <section
@@ -44,6 +48,12 @@ export function ImpactLedger({ stats }: { stats: ImpactStats | null }) {
           ))}
         </ul>
       )}
+
+      {donated ? (
+        <p className="border-t border-border px-5 py-3 text-sm leading-relaxed text-muted-foreground sm:px-8">
+          <bdi>{donated}</bdi>
+        </p>
+      ) : null}
 
       <div className="flex flex-col gap-2 bg-muted/60 px-5 py-3 text-xs text-muted-foreground sm:px-8">
         {stats === null ? (

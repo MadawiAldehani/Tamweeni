@@ -1,27 +1,30 @@
-// What the family can give this month: the surplus of their saved pickup plan (entitled − planned),
-// minus what they already pledged. Pure functions over the snapshot: no React, safe to import anywhere.
-import type { Donation, Member, Snapshot } from "@/lib/data/types";
-import { planMonthFor, savedPlanFor } from "@/lib/plan/month";
+// What the family can give: leftovers of what they ALREADY collected (this month's pickup, or the
+// most recent one), minus what they already pledged for that month. Donation is optional and never
+// derived from the pickup plan — Tamweeni never suggests taking more in order to give.
+// Pure functions over the snapshot: no React, safe to import anywhere.
+import type { Donation, PickupWithLines, Snapshot } from "@/lib/data/types";
+import { currentMonth } from "@/lib/format";
 import { RATION_ITEMS, type RationItem, type RationItemId } from "@/lib/ration/catalog";
 import { stepFor } from "@/lib/ration/consumption";
-import { entitledQty, subsidyValue } from "@/lib/ration/entitlement";
+import { subsidyValue } from "@/lib/ration/entitlement";
+import { latestCheckins } from "@/lib/ration/insights";
 import { mealsFor } from "@/lib/ration/meals";
 
 export type DonationDraftLine = { item: RationItem; qty: number; maxQty: number };
 
 export type DonationPrefill = {
   month: string;
-  /** "plan": quantities come from the saved plan for `month`; "none": no plan yet, every item starts at 0. */
-  source: "plan" | "none";
+  /** "collected": lines are what was collected in `month`; "none": no pickup recorded at all. */
+  source: "collected" | "none";
   lines: DonationDraftLine[];
 };
 
-/** Rounds DOWN to the pack step, so a pledge never exceeds the surplus. 2 dp avoids float noise. */
+/** Rounds DOWN to the pack step, so a pledge never exceeds what was collected. 2 dp avoids float noise. */
 export function floorToStep(qty: number, step: number): number {
   return Number((Math.floor(qty / step + 1e-9) * step).toFixed(2));
 }
 
-/** Quantity already pledged or collected per item in a month. */
+/** Quantity per item summed over the given month: pledged (or collected by the Food Bank) donations. */
 function pledgedByItem(donations: Donation[], month: string): Map<RationItemId, number> {
   const totals = new Map<RationItemId, number>();
   for (const d of donations) {
@@ -30,51 +33,47 @@ function pledgedByItem(donations: Donation[], month: string): Map<RationItemId, 
   return totals;
 }
 
-/**
- * One draft line, or null when the household is not entitled to the item at all.
- * `ceiling` is the most the family can give before this month's pledges: the plan surplus
- * (entitled − planned) with a plan, the whole entitlement without one.
- */
-function draftLine(item: RationItem, members: Member[], pledged: Map<RationItemId, number>, ceiling: number): DonationDraftLine | null {
-  const entitled = Number(entitledQty(item, members).toFixed(2));
-  if (entitled <= 0) return null;
-  const step = stepFor(item);
-  // What is already pledged this month comes off the ceiling, so re-opening the picker after a
-  // pledge never re-offers the same surplus; the stepper starts at the ceiling.
-  const already = pledged.get(item.id) ?? 0;
-  const maxQty = floorToStep(Math.max(0, ceiling - already), step);
-  return { item, qty: maxQty, maxQty };
+/** Quantity per item collected across every pickup of a month. */
+function collectedByItem(pickups: PickupWithLines[], month: string): Map<RationItemId, number> {
+  const totals = new Map<RationItemId, number>();
+  for (const p of pickups) {
+    if (p.month !== month) continue;
+    for (const l of p.lines) totals.set(l.item_id, (totals.get(l.item_id) ?? 0) + l.qty);
+  }
+  return totals;
+}
+
+/** The latest month with a pickup: this month when it has one, else the most recent past month; null with no pickups. */
+export function leftoverMonthFor(snapshot: Snapshot, now: Date): string | null {
+  const thisMonth = currentMonth(now);
+  const months = [...new Set(snapshot.pickups.map((p) => p.month))].sort();
+  const past = months.filter((m) => m <= thisMonth);
+  return past.at(-1) ?? months.at(-1) ?? null;
 }
 
 /**
- * Month: `planMonth` when given, else the month a new plan would be for.
- * With a saved plan for that month: one line per plan item, qty = maxQty = entitled − planned − already pledged,
- * items with nothing left to give dropped. Without a plan: every entitled item at 0 (up to the entitlement
- * minus pledges), for a manual pick.
+ * One line per item collected in the leftover month, starting at 0 (the family picks what is
+ * really left over), capped at collected − already pledged that month, rounded down to the pack
+ * step. When a pantry check-in exists for that month the cap is what it found remaining instead
+ * of what was collected, so a pledge can never exceed what is actually in the pantry. Items with
+ * nothing left to give are dropped. Without any pickup: source "none", no lines.
  */
-export function donationPrefill(snapshot: Snapshot, now: Date, planMonth?: string | null): DonationPrefill {
-  const month = planMonth ?? planMonthFor(snapshot, now).month;
-  const plan = savedPlanFor(snapshot, month);
-  const { members } = snapshot;
+export function donationPrefill(snapshot: Snapshot, now: Date): DonationPrefill {
+  const month = leftoverMonthFor(snapshot, now);
+  if (month === null) return { month: currentMonth(now), source: "none", lines: [] };
+
+  const collected = collectedByItem(snapshot.pickups, month);
   const pledged = pledgedByItem(snapshot.donations, month);
-
-  if (plan) {
-    const lines = RATION_ITEMS.flatMap((item) => {
-      const planned = plan.lines.find((l) => l.item_id === item.id);
-      if (!planned) return [];
-      const surplus = Number((entitledQty(item, members) - planned.planned_qty).toFixed(2));
-      const line = draftLine(item, members, pledged, surplus);
-      // Items planned in full (no surplus) or already pledged in full stay out of the picker.
-      return line && line.maxQty > 0 ? [line] : [];
-    });
-    return { month, source: "plan", lines };
-  }
-
+  const checkins = latestCheckins(snapshot, month);
   const lines = RATION_ITEMS.flatMap((item) => {
-    const line = draftLine(item, members, pledged, entitledQty(item, members));
-    return line ? [{ ...line, qty: 0 }] : [];
+    const got = collected.get(item.id) ?? 0;
+    if (got <= 0) return [];
+    const remaining = checkins.get(item.id)?.qty_remaining;
+    const available = (remaining === undefined ? got : Math.min(got, Math.max(0, remaining))) - (pledged.get(item.id) ?? 0);
+    const maxQty = floorToStep(available, stepFor(item));
+    return maxQty > 0 ? [{ item, qty: 0, maxQty }] : [];
   });
-  return { month, source: "none", lines };
+  return { month, source: "collected", lines };
 }
 
 export type DraftTotals = {

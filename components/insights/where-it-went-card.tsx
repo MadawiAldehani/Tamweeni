@@ -30,15 +30,16 @@ const ROWS: RowKey[] = ["used", "donated", "wasted", "atHome"];
 
 /**
  * Four labelled bars for the latest checked-in month: used, donated, wasted, still at home.
- * Donations are the surplus the family did not collect, so each share is of collected + donated
- * and the four bars add up to 100 %.
+ * Donations are leftovers the family already collected, so they come out of what was still at
+ * home; the four bars share `collected` as the base and add up to 100 %.
  */
 export function WhereItWentCard({ points, item }: WhereItWentCardProps) {
   const { t, locale } = useLanguage();
   const name = localized(item, "name", locale);
   const went: WhereItWent | null = whereItemWent(points, item.id);
   const month = went ? monthLabel(went.month, locale, "long") : "";
-  const base = went ? went.collected + went.donated : 0;
+  const base = went ? went.collected : 0;
+  const atHome = went ? Math.max(0, went.atHome - went.donated) : 0;
 
   return (
     <Card>
@@ -62,7 +63,7 @@ export function WhereItWentCard({ points, item }: WhereItWentCardProps) {
           <div className="flex flex-col gap-3">
             <ul className="stagger flex flex-col gap-3">
               {ROWS.map((key, index) => {
-                const value = went[key];
+                const value = Math.min(key === "atHome" ? atHome : went[key], base);
                 const label = t(`pages.insights.series.${key}`);
                 const pct = base > 0 ? Math.round((Math.min(value, base) / base) * 100) : 0;
                 const qty = formatNumber(value, locale, 1);

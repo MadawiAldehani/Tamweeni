@@ -2,8 +2,8 @@
   "app": {
     "name": "Tamweeni",
     "nameArabic": "تمويني",
-    "tagline": "See your ration. Take what you need. Donate the rest.",
-    "shortDescription": "Smart ration tracking for Kuwaiti families"
+    "tagline": "See your ration. Take what you need. Nothing goes to waste.",
+    "shortDescription": "Take only the ration you need"
   },
   "nav": {
     "home": "Home",
@@ -76,10 +76,10 @@
       "actions": {
         "scan": "Scan receipt",
         "plan": "Plan pickup",
-        "donate": "Donate",
+        "donate": "Leftovers",
         "scanHint": "after your branch visit",
         "planHint": "before you go",
-        "donateHint": "the rest, in one tap",
+        "donateHint": "give what you won't use",
         "checkin": "Pantry check-in",
         "checkinHint": "1 minute"
       },
@@ -95,7 +95,7 @@
       "insight": {
         "empty": "Scan one receipt and we start learning what your family really uses.",
         "noData": "Scan your first receipt to start learning your family's real usage.",
-        "surplus": "Last month you collected {collected} {unit} of {item} and used about {used} {unit}. You could donate {surplus} {unit} this month.",
+        "surplus": "Last month you collected {collected} {unit} of {item} and used about {used} {unit}. Try taking about {surplus} {unit} less this month.",
         "checkinDue": "A week since your pickup — a one-minute pantry check-in teaches Tamweeni what you really use.",
         "tracked": "You've collected {collected} of your {entitled} this month. Plan the next pickup to take only what you use."
       },
@@ -108,9 +108,8 @@
         "progressLabel": "{item}: {collected} of {entitled} {unit} collected"
       },
       "sadaqa": {
-        "title": "Your sadaqa",
+        "title": "Leftovers you gave",
         "caption": "given to the Kuwait Food Bank",
-        "empty": "Your first donation starts the count.",
         "jariya": "صدقة جارية",
         "meals": "≈ {meals} meals",
         "subsidy": "{kd} of subsidy passed on"
@@ -120,7 +119,7 @@
     "plan": {
       "title": "Plan pickup",
       "subtitle": "Take what you need",
-      "placeholder": "Plan next month's pickup and leave the rest for someone else.",
+      "placeholder": "Plan your next pickup and take only what you need.",
       "month": {
         "planning": "Planning {month}",
         "thisMonth": "You have not collected this month yet, so this plan is for your next branch visit.",
@@ -138,15 +137,15 @@
         "pantry": "~{qty} {unit} at home",
         "decrement": "Take less {item}",
         "increment": "Take more {item}",
-        "surplus": "Surplus {qty} {unit}"
+        "surplus": "Not taking {qty} {unit}"
       },
       "summary": {
-        "takingAll": "You need your full entitlement — no surplus this month",
+        "takingAll": "You need your full entitlement this month",
         "save": "Save plan",
         "saving": "Saving…",
         "saveError": "Could not save the plan. Try again.",
-        "needSurplus": "You need {need} kg · Surplus {surplus}",
-        "surplusHint": "Your surplus becomes your donation on the Donate page."
+        "needSurplus": "You need {need} kg · Not taking {surplus}",
+        "surplusHint": "What you don’t take stays in the system — subsidy saved for Kuwait."
       },
       "checklist": {
         "saved": "Saved plan",
@@ -156,10 +155,10 @@
         "copied": "Copied",
         "showAtBranch": "Show this list at the ration branch",
         "totals": "{count} items · {kg} kg to collect",
-        "empty": "Nothing planned — your full entitlement is surplus.",
+        "empty": "Nothing planned — your full entitlement stays in the system this month.",
         "madeWith": "Made with Tamweeni",
         "copyFailed": "Could not copy — long-press the list to copy it",
-        "surplus": "Surplus this month: {surplus} — waiting on the Donate page"
+        "surplus": "Not taking this month: {surplus} — stays for the country"
       },
       "pack": {
         "multi": "{packs} × {size} {unit}",
@@ -175,8 +174,8 @@
     },
     "donate": {
       "title": "Donate",
-      "subtitle": "Give what you won’t use",
-      "placeholder": "Pledge surplus ration items to the Kuwait Food Bank.",
+      "subtitle": "Leftovers you won’t use",
+      "placeholder": "Give leftovers you already collected to the Kuwait Food Bank.",
       "voucher": {
         "title": "Donation voucher",
         "eyebrow": "Tamweeni · Kuwait Food Bank pledge",
@@ -212,39 +211,33 @@
         "countOne": "1 voucher"
       },
       "picker": {
-        "surplusFor": "Surplus for {month}",
-        "fromPlan": "Your entitlement minus what you planned to take — adjust it before you pledge.",
-        "fromSuggestion": "Based on what your family usually uses",
-        "fromNone": "Choose what you’d like to give",
-        "adjustPlan": "Adjust my pickup plan first",
-        "allPledged": "You’ve already pledged your whole surplus for {month}. Thank you.",
-        "fromPlanFor": "From your plan for {month}",
-        "noPlanTitle": "Make your pickup plan first — your surplus appears here",
-        "noPlanAction": "Plan my pickup",
-        "orPick": "Or pick items yourself",
-        "changePlan": "Change my plan"
+        "allPledged": "You’ve already given all your leftovers from {month}. Thank you.",
+        "leftoversFrom": "Leftovers from {month}",
+        "intro": "Have leftovers you won’t use? Give them to the Kuwait Food Bank. Only what you already collected — Tamweeni never asks you to take more.",
+        "emptyTitle": "Nothing collected yet — leftovers appear here after your pickup.",
+        "emptyAction": "Record my pickup"
       },
       "item": {
-        "upTo": "up to {qty} {unit}",
+        "upTo": "up to {qty} {unit} left",
         "decrement": "Give less {item}",
         "increment": "Give more {item}"
       },
       "summary": {
         "totals": "{kg} kg · {kd} of subsidy · ≈ {meals} meals",
-        "pledge": "Pledge to the Food Bank",
-        "pledging": "Pledging…",
+        "pledge": "Give to the Food Bank",
+        "pledging": "Saving…",
         "hint": "Pick at least one item",
         "error": "Could not save the pledge. Try again."
       },
       "success": {
-        "title": "Pledged — thank you",
+        "title": "Thank you — your leftovers will feed someone",
         "meals": "Your family just passed on ≈ {meals} meals",
         "backHome": "Back home",
-        "donateMore": "Donate more"
+        "donateMore": "Give more leftovers"
       },
       "empty": {
         "title": "Add your family first",
-        "description": "Your surplus is worked out from the people on your ration card.",
+        "description": "Leftovers come from the pickups recorded for your ration card.",
         "action": "Go to settings"
       }
     },
@@ -291,7 +284,7 @@
         "unused": "≈ {qty} {unit} unused over {count} months",
         "unusedOne": "≈ {qty} {unit} unused last month",
         "shareLabel": "{item}: {pct}% unused",
-        "donate": "Donate the surplus",
+        "donate": "Give leftovers you won't use",
         "empty": {
           "title": "No pantry check-ins yet",
           "description": "Check what is left in your pantry and Tamweeni learns what your family really uses.",
@@ -499,9 +492,9 @@
       "placeholder": "Impact numbers will appear here.",
       "stats": {
         "households": "households on Tamweeni",
-        "kgPledged": "pledged to the Kuwait Food Bank",
-        "kdRedirected": "of subsidy redirected",
-        "overCollection": "average over-collection"
+        "overCollection": "average over-collection",
+        "kgNotTaken": "of ration not taken — left for the country",
+        "kdSaved": "of subsidy saved"
       },
       "backToApp": "Open the app",
       "eyebrow": "Kuwait · {month} · aggregated and anonymised",
@@ -533,16 +526,18 @@
       "method": {
         "title": "How the numbers are computed",
         "body": "Entitlement is the official per-person quota × registered household members, priced at the subsidised rate. Collected comes from scanned branch receipts. Used comes from weekly pantry check-ins. Over-collection = Σ (collected − used) ÷ Σ collected over the last three months, across households with at least one pantry check-in. No names, card numbers or addresses leave the phone.",
-        "request": "Detailed data available on request to the Ministry of Commerce and Industry."
+        "request": "Detailed data available on request to the Ministry of Commerce and Industry.",
+        "principle": "Tamweeni never encourages taking more than a family needs; \"not taken\" is measured against the official entitlement."
       },
-      "foodBankLine": "Surplus pledged through Tamweeni goes to the Kuwait Food Bank.",
+      "foodBankLine": "Leftovers families won't use can go to the Kuwait Food Bank — optional, never a reason to take more.",
       "source": {
         "demo": "Pilot projection · demo data",
         "live": "Live · updated {date}",
         "note": "Projection based on the 2025 MOCI ration figures and the pilot's first households; live numbers replace it as families join.",
         "info": "About these numbers"
       },
-      "eyebrowProjection": "Kuwait · {month} · pilot projection"
+      "eyebrowProjection": "Kuwait · {month} · pilot projection",
+      "donatedLine": "+ {kg} kg of leftovers given to the Kuwait Food Bank (≈ {kd})"
     },
     "onboarding": {
       "title": "Welcome",
@@ -561,8 +556,8 @@
           "body": "Plan your pickup around what you actually use."
         },
         "donate": {
-          "title": "Donate the rest",
-          "body": "One tap sends your surplus to the Kuwait Food Bank."
+          "title": "Nothing goes to waste",
+          "body": "What you don't need stays in the system for Kuwait. Leftovers you won't use can go to the Kuwait Food Bank."
         },
         "foodBank": "Kuwait Food Bank"
       },

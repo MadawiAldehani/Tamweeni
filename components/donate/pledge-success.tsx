@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import { formatNumber } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/provider";
 
-/** Short celebratory header shown above the voucher: the sadaqa circle, thanks, and the meals passed on. */
+/** Short header shown above the voucher: the sadaqa circle, thanks for the leftovers given, and the meals passed on. */
 export function PledgeSuccess({ meals, style }: { meals: number; style?: CSSProperties }) {
   const { t, locale } = useLanguage();
 

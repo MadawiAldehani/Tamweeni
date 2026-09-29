@@ -1,6 +1,7 @@
 // The Abdullah demo family: two past months of full-quota pickups with pantry
 // check-ins (including a little expired milk, sugar and tomato paste so Insights
-// has waste to show), one collected donation, and a clean current month.
+// has waste to show), one collected donation of leftovers made after the check-in,
+// and a clean current month.
 // Deterministic: the same `now` and ids always produce byte-identical output.
 import { RATION_ITEMS, type RationItemId } from "@/lib/ration/catalog";
 import { entitledQty } from "@/lib/ration/entitlement";
@@ -151,7 +152,7 @@ export function buildDemoSnapshot(
     month: m1,
     status: "collected",
     voucher_code: "TW-DEMO1",
-    created_at: isoTimestamp(m1, 10),
+    created_at: isoTimestamp(m1, 28),
   };
 
   return {

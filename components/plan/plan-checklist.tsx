@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, HeartHandshake, Pencil, Share2, Store } from "lucide-react";
+import { Check, Leaf, Pencil, Share2, Store } from "lucide-react";
 import type { CSSProperties } from "react";
 
 import { ItemIcon } from "@/components/common/item-icon";
@@ -26,7 +26,7 @@ type PlanChecklistProps = {
 
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
-/** The saved plan as a clean list to show at the branch, with Share and Edit; the surplus waits on the Donate page. */
+/** The saved plan as a clean list to show at the branch, with Share and Edit. What the family is not taking stays in the system. */
 export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklistProps) {
   const { t, locale } = useLanguage();
   const { status, share } = usePlanShare();
@@ -45,6 +45,7 @@ export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklis
     });
   const planTotals = savedPlanTotals(plan, members);
   const totals = t("pages.plan.checklist.totals", { count: lines.length, kg: formatNumber(planTotals.needKg, locale, 1) });
+  const notTaking = planTotals.takingEverything ? "" : t("pages.plan.checklist.surplus", { surplus: formatSurplus(planTotals, locale, t) });
 
   const onShare = () => {
     const text = buildShareText(locale, t, {
@@ -53,6 +54,7 @@ export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklis
       month: plan.month,
       lines,
       needKg: planTotals.needKg,
+      notTaking,
     });
     const title = `${locale === "ar" ? t("app.nameArabic") : t("app.name")} — ${t("pages.plan.checklist.title")}`;
     void share(title, text);
@@ -107,12 +109,12 @@ export function PlanChecklist({ plan, household, members, onEdit }: PlanChecklis
               <Store className="size-3.5 shrink-0" aria-hidden="true" />
               {t("pages.plan.checklist.showAtBranch")}
             </p>
-            {planTotals.takingEverything ? null : (
+            {notTaking ? (
               <p className="tabular inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                <HeartHandshake className="size-3.5 shrink-0 text-warm-ink" aria-hidden="true" />
-                <bdi>{t("pages.plan.checklist.surplus", { surplus: formatSurplus(planTotals, locale, t) })}</bdi>
+                <Leaf className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
+                <bdi>{notTaking}</bdi>
               </p>
-            )}
+            ) : null}
           </div>
         </CardContent>
       </Card>

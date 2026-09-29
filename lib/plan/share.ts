@@ -1,4 +1,4 @@
-// Plain-text version of the checklist for navigator.share / the clipboard. Kilos only, no money.
+// Plain-text version of the checklist for navigator.share / the clipboard. Kilos only, no money, no donate mention.
 import type { Locale } from "@/lib/i18n/config";
 import type { TKey, TVars } from "@/lib/i18n/translate";
 import { formatNumber, monthLabel } from "@/lib/format";
@@ -19,6 +19,8 @@ export type ShareInput = {
   lines: ShareLine[];
   /** Kilos (and litres) the family plans to collect. */
   needKg: number;
+  /** "Not taking this month: …" already translated; "" when the family takes everything. */
+  notTaking?: string;
 };
 
 type Translate = (key: TKey, vars?: TVars) => string;
@@ -29,8 +31,9 @@ export function buildShareText(locale: Locale, t: Translate, input: ShareInput):
   const body = input.lines.map((l) => `• ${l.name} — ${l.qty}${l.pack ? ` (${l.pack})` : ""}`);
   const foot = [
     t("pages.plan.checklist.totals", { count: input.lines.length, kg: formatNumber(input.needKg, locale, 1) }),
+    input.notTaking ?? "",
     t("pages.plan.checklist.showAtBranch"),
     t("pages.plan.checklist.madeWith"),
   ];
-  return [...head.filter(Boolean), "", ...body, "", ...foot].join("\n");
+  return [...head.filter(Boolean), "", ...body, "", ...foot.filter(Boolean)].join("\n");
 }

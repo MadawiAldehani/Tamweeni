@@ -1,13 +1,14 @@
 # Tamweeni · تمويني
 
-**See your ration. Take what you need. Donate the rest.**
+**See your ration. Take what you need. Nothing goes to waste.**
 
 Tamweeni is a mobile-first web app (installable PWA) for Kuwaiti families that makes the
 national food-ration system (التموين) smart. A family sees its monthly entitlement, records
 what it actually collected at the co-op ration branch (فرع التموين) by photographing the
-receipt, learns what it really uses through a one-minute weekly pantry check-in, plans the
-next pickup around that, and pledges the surplus to the Kuwait Food Bank
-(البنك الكويتي للطعام) with one tap. Aggregated and anonymised, the same data becomes the
+receipt, learns what it really uses through a one-minute weekly pantry check-in, and plans the
+next pickup around that — taking only what it needs, so the rest stays in the system for
+Kuwait. Leftovers a family will not use can optionally go to the Kuwait Food Bank
+(البنك الكويتي للطعام). Aggregated and anonymised, the same data becomes the
 first real picture of ration over-collection in Kuwait (`/impact`).
 
 There is no integration with MOCI or the co-ops yet: everything runs in **shadow mode**
@@ -27,22 +28,30 @@ paid API. This is the mode to demo in.
 `npm run build` must pass before you ship; `npm run lint` and `node scripts/check-i18n.mjs`
 are the other two gates.
 
+## The principle
+
+Tamweeni never encourages a family to take more than it needs. The "surplus" in the pickup
+plan is what the family leaves in the system — subsidy saved for the country. Donating is an
+optional path for leftovers that already happened (items collected and not going to be used);
+it is never derived from the plan and never a reason to collect more. Every screen, metric and
+sentence should read that way.
+
 ## The 3-minute demo
 
 1. **Onboarding** — swipe the three-beat story, switch to **العربية** to show RTL, continue
    as the demo family (Abdullah family, 7 members, one infant, two months of history).
-2. **Home** — entitlement in KD, the month ring, the pantry shelf, the insight sentence
-   ("Last month you collected 35 kg of rice and used about 15 kg…"), the sadaqa counter.
+2. **Home** — entitlement in kilos (subsidy value as a caption), the month ring, the pantry
+   shelf, the insight sentence ("…used about 15 kg — try taking about 20 kg less").
 3. **Scan receipt** — tap **Use the sample receipt**, watch it parse, correct a line,
    save. Home flips to 100 % collected and the "Next" tile becomes the pantry check-in.
 4. **Pantry check-in** — slide a couple of items ("half", "all used"), save, see
    "what we learned".
-5. **Plan pickup** — suggested quantities per item, the "You need 15 kg · Surplus 20 kg" bar
-   (kilos only — the surplus becomes the donation), save → the branch checklist with pack
+5. **Plan pickup** — suggested quantities per item, the "You need 15 kg · Not taking 20 kg"
+   bar (what you do not take stays in the system), save → the branch checklist with pack
    counts, **Share**.
-6. **Donate** — the surplus of the saved plan is prefilled ("From your plan for …"; no plan →
-   "Make your pickup plan first"), pledge → voucher with QR code, **Request pickup on
-   WhatsApp**, history with "mark as collected".
+6. **Leftovers (optional)** — items already collected that the family will not use can go to the
+   Food Bank: donation slip with QR code, **Request pickup on WhatsApp**, history with
+   "mark as collected".
 7. **Insights** — entitled vs collected vs used per item, money view, waste-risk list.
 8. **/impact** — the national page for judges (labelled "pilot projection" until live
    data exists).

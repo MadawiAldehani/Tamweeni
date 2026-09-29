@@ -6,11 +6,14 @@ import { formatKD, formatNumber } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/provider";
 import { sadaqaTotals } from "@/lib/ration/meals";
 
-/** Running total of what the family has given. Terracotta lives here and nowhere else. */
+/**
+ * Running total of leftovers the family has already given. Renders only once a donation
+ * exists: giving is optional and never nudged. Terracotta lives here and nowhere else.
+ */
 export function SadaqaCounter({ donations }: { donations: Donation[] }) {
   const { t, locale } = useLanguage();
   const totals = sadaqaTotals(donations);
-  const hasGiven = totals.count > 0;
+  if (totals.count === 0) return null;
 
   return (
     <div className="flex items-center gap-4 rounded-2xl bg-card p-4 ring-1 ring-foreground/10">
@@ -32,18 +35,12 @@ export function SadaqaCounter({ donations }: { donations: Donation[] }) {
               durationMs={900}
             />
           </bdi>
-          {hasGiven ? (
-            <span className="tabular ms-2 text-sm font-medium text-warm-ink">
-              <bdi>{t("pages.home.sadaqa.meals", { meals: formatNumber(totals.meals, locale, 0) })}</bdi>
-            </span>
-          ) : null}
+          <span className="tabular ms-2 text-sm font-medium text-warm-ink">
+            <bdi>{t("pages.home.sadaqa.meals", { meals: formatNumber(totals.meals, locale, 0) })}</bdi>
+          </span>
         </p>
         <p className="text-xs text-muted-foreground">
-          {hasGiven ? (
-            <bdi>{t("pages.home.sadaqa.subsidy", { kd: formatKD(totals.kd, locale) })}</bdi>
-          ) : (
-            t("pages.home.sadaqa.empty")
-          )}
+          <bdi>{t("pages.home.sadaqa.subsidy", { kd: formatKD(totals.kd, locale) })}</bdi>
         </p>
       </div>
       {/* The cultural phrase, shown in Arabic in both locales. */}

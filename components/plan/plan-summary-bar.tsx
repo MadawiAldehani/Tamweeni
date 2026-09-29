@@ -17,7 +17,7 @@ type PlanSummaryBarProps = {
   onSave: () => void;
 };
 
-/** Sticky bar above the pill nav: what the family needs vs. its surplus (kilos only), and Save plan. */
+/** Sticky bar above the pill nav: what the family needs vs. what it is not taking (kilos only; it stays in the system), and Save plan. */
 export function PlanSummaryBar({ totals, saving, error, style, className, onSave }: PlanSummaryBarProps) {
   const { t, locale } = useLanguage();
 

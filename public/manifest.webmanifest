@@ -1,7 +1,7 @@
 {
   "name": "Tamweeni — تمويني",
   "short_name": "Tamweeni",
-  "description": "See your ration. Take what you need. Donate the rest.",
+  "description": "See your ration. Take what you need. Nothing goes to waste.",
   "id": "/",
   "start_url": "/home",
   "scope": "/",

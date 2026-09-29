@@ -8,14 +8,22 @@ import { EmptyState } from "@/components/common/empty-state";
 import { ItemIcon } from "@/components/common/item-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatNumber } from "@/lib/format";
+import { useSnapshot } from "@/lib/data/provider";
+import { currentMonth, formatNumber } from "@/lib/format";
 import { localized, useLanguage } from "@/lib/i18n/provider";
 import type { WasteRow } from "@/lib/insights/series";
+import { hasPickupIn } from "@/lib/plan/month";
 import { unitFor } from "@/lib/plan/units";
 
-/** "What you don't use": items ranked by the share left unused (with what was wasted), a thin warm bar; the top row links to donating. */
+/**
+ * "What you don't use": items ranked by the share left unused (with what was wasted), a thin warm bar.
+ * The top row offers to give leftovers only when this month has a pickup (leftovers already exist).
+ */
 export function WasteRiskList({ rows }: { rows: WasteRow[] }) {
   const { t, locale } = useLanguage();
+  const snapshot = useSnapshot();
+  // The page mounts this list after hydration, so reading the clock here is safe.
+  const canGive = hasPickupIn(snapshot.pickups, currentMonth());
 
   return (
     <Card>
@@ -82,7 +90,7 @@ export function WasteRiskList({ rows }: { rows: WasteRow[] }) {
                           <bdi>{wasted}</bdi>
                         </>
                       ) : null}
-                      {index === 0 && row.unused > 0 ? (
+                      {index === 0 && row.unused > 0 && canGive ? (
                         <>
                           {" · "}
                           <Link href="/donate" className="inline-flex items-center gap-0.5 font-medium text-warm-ink underline-offset-4 hover:underline">

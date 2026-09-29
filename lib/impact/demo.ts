@@ -2,12 +2,18 @@
 // service key exists (mock mode) or the live aggregate fails. The UI labels them as a
 // projection, never as measured data. Replace with live aggregates (lib/impact/aggregate.ts)
 // as households join. Based on the 2025 MOCI ration figures and the pilot's first families.
+//
+// These are projections, not measurements: kgNotTaken / kdSaved model what families would leave
+// in the system by taking only what they need; kgDonated / kdDonated are leftovers that already
+// happened and were given to the Food Bank — a secondary line, never derived from the plan.
 import type { ImpactStats } from "@/lib/impact/types";
 
 export const DEMO_IMPACT: ImpactStats = {
   households: 1284,
-  kgPledged: 18640,
-  kdRedirected: 9412,
+  kgNotTaken: 22410,
+  kdSaved: 11205,
+  kgDonated: 3180,
+  kdDonated: 1590,
   overCollectionRate: 0.31,
   governorates: [
     { id: "capital", households: 214, overCollectionRate: 0.29 },
